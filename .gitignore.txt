@@ -1,2 +1,2 @@
-build/
-dist/
+build/built-jar.properties
+dist/StockManagmentSystem.jar
