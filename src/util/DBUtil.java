@@ -13,7 +13,7 @@ public class DBUtil {
     
     private Connection connection = null;
     private Statement state = null;
-    private final String url = "jdbc:postgresql://127.0.0.1:5432/StockManagementSystem";
+    private final String url = "jdbc:postgresql://127.0.0.1:5432/DisturbutionManagmentSystem";
     private final String user = "postgres";
     private final String password = "admin";
     

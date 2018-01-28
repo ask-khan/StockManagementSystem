@@ -1,0 +1,30 @@
+// Create Table user.
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+    username text,
+    fullname text,
+    password text,
+    emailaddress text,
+    phonenumber text,
+    createddate timestamp,
+    modifieddate timestamp
+);
+
+// Insert Table User.
+insert into users ( id, username, fullname, password, emailaddress, phonenumber, createddate, modifieddate )
+	values ( 1, 'admin', 'admin', 'admin', 'admin@gmail.com', '03082834021', current_timestamp, current_timestamp );
+
+// Create Table Product.
+CREATE TABLE products (
+    id serial Primary key,
+    productname text,
+    brandname text,
+    purchaseprice double precision,
+    suppliername text,
+    createddate timestamp,
+    modifieddate timestamp
+);
+
+// Insert Table Product
+Insert into products ( productname, brandname, purchaseprice, suppliername, createddate , modifieddate  ) 
+values( 'Product A', 'Company A', 266.0, 'Ahmed Supplier Name', current_timestamp, current_timestamp );

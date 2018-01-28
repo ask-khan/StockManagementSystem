@@ -25,8 +25,7 @@
                         <JFXTextField fx:id="ProductNameTextField" labelFloat="true" layoutX="42.0" layoutY="98.0" prefHeight="25.0" prefWidth="219.0" promptText="Product Name" />
                         <JFXTextField fx:id="BrandTextField" labelFloat="true" layoutX="43.0" layoutY="159.0" prefHeight="25.0" prefWidth="220.0" promptText="Brand" />
                         <JFXTextField fx:id="ProductPriceTextField" labelFloat="true" layoutX="299.0" layoutY="44.0" prefHeight="25.0" prefWidth="237.0" promptText="Purchase Price" />
-                        <JFXTextField fx:id="tradePriceTextField" labelFloat="true" layoutX="299.0" layoutY="98.0" prefHeight="25.0" prefWidth="235.0" promptText="Trade Price" />
-                        <JFXTextField fx:id="SupplierTextField" labelFloat="true" layoutX="299.0" layoutY="159.0" prefHeight="25.0" prefWidth="237.0" promptText="Supplier Name" />
+                        <JFXTextField fx:id="SupplierTextField" labelFloat="true" layoutX="299.0" layoutY="98.0" prefHeight="25.0" prefWidth="237.0" promptText="Supplier Name" />
                         <JFXButton fx:id="SaveProductButton" layoutX="595.0" layoutY="153.0" onAction="#saveProductFunction" prefHeight="31.0" prefWidth="91.0" styleClass="buttonClass" text="Save" textFill="#fcfafa" />
                         <JFXTextField labelFloat="true" layoutX="791.0" layoutY="156.0" prefHeight="25.0" prefWidth="195.0" promptText="Delete Product" />
                         <JFXButton layoutX="1024.0" layoutY="153.0" prefHeight="31.0" prefWidth="104.0" styleClass="buttonClass" text="Delete" textFill="WHITE" />
