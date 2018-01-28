@@ -22,7 +22,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -53,7 +52,7 @@ public class DashboardController implements Initializable {
     private JFXButton SaveProductButton, ResetProductButton;
     
     @FXML
-    private JFXTextField ProductIdTextField, ProductPriceTextField, ProductNameTextField, tradePriceTextField, BrandTextField, SupplierTextField;
+    private JFXTextField ProductIdTextField, ProductPriceTextField, ProductNameTextField, BrandTextField, SupplierTextField;
     
     /**
      * Initializes the controller class.
@@ -128,8 +127,6 @@ public class DashboardController implements Initializable {
         RequiredFieldValidator productPriceValidator = new RequiredFieldValidator(); 
         // Product Name Validator.
         RequiredFieldValidator productNameValidator = new RequiredFieldValidator(); 
-        // Product Trade Validator.
-        RequiredFieldValidator TradePriceValidator = new RequiredFieldValidator();
         // Brand Name Validator.
         RequiredFieldValidator BrandNameValidator = new RequiredFieldValidator();
         // Supplier Name Validator.
@@ -141,11 +138,7 @@ public class DashboardController implements Initializable {
         
         //Brand Name Is validation.
         BrandNameValidator.setMessage("Brand Name Cannot Be Empty."); 
-        tradePriceTextField.getValidators().add(BrandNameValidator);
-        
-        //Trade Price Is validation.
-        TradePriceValidator.setMessage("Trade Price Cannot Be Empty."); 
-        tradePriceTextField.getValidators().add(TradePriceValidator);
+        BrandTextField.getValidators().add(BrandNameValidator);
         
         //Product Name Is validation.
         productNameValidator.setMessage("Product Name Cannot Be Empty."); 
@@ -153,7 +146,7 @@ public class DashboardController implements Initializable {
         
         //Product Id Is validation.
         productPriceValidator.setMessage("Invalid Product Price."); 
-        ProductIdTextField.getValidators().add(productPriceValidator);
+        ProductPriceTextField.getValidators().add(productPriceValidator);
         
         //Product Id Is validation.
         productIdValidator.setMessage("Invalid Product Id."); 
@@ -179,13 +172,6 @@ public class DashboardController implements Initializable {
             ProductNameTextField.validate();
         }
         
-        // Trade Price Text Field.
-        if ( !tradePriceTextField.getText().isEmpty() && this.validateInteger(ProductIdTextField.getText()) ) {
-            productInformation.add(tradePriceTextField.getText()  );
-        } else {
-            tradePriceTextField.validate();
-        }
-        
         // Brand Name Text Field.
         if ( !BrandTextField.getText().isEmpty()) {
             productInformation.add(BrandTextField.getText()  );
@@ -197,18 +183,30 @@ public class DashboardController implements Initializable {
         if ( !SupplierTextField.getText().isEmpty()) {
             productInformation.add(SupplierTextField.getText()  );
         } else {
-            BrandTextField.validate();
+            SupplierTextField.validate();
         }
         
-        System.out.println(productInformation);
+        if ( productInformation.size() == 4 ) {
+            
+        } else {
+            ProductPriceTextField.validate();
+            ProductNameTextField.validate();
+            BrandTextField.validate();
+            SupplierTextField.validate();
+        }
     }
     
+    
+    /*
+     * Reset Product Functionality.
+     * @param: event: ActionEvent
+     **/
     @FXML   
     private void resetProductFunction(ActionEvent event) {
+        // Product Fields.                
         ProductIdTextField.setText("");
         ProductPriceTextField.setText("");
         ProductNameTextField.setText("");
-        tradePriceTextField.setText("");
         BrandTextField.setText("");
         SupplierTextField.setText("");
        
