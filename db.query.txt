@@ -1,0 +1,11 @@
+// Create Table user.
+CREATE TABLE users (
+    id serial PRIMARY KEY,
+    username text,
+    fullname text,
+    password text,
+    emailaddress text,
+    phonenumber text,
+    createddate timestamp,
+    modifieddate timestamp
+);
