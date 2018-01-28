@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="StockManagmentSystem.jar" size="135570" download="eager" />
+    <jar href="StockManagmentSystem.jar" size="135624" download="eager" />
     <jar href="lib\jfoenix.jar" size="2406659" download="eager" />
     <jar href="lib\postgresql-42.1.4.jre7.jar" size="708602" download="eager" />
   </resources>
