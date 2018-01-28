@@ -47,12 +47,6 @@ public class DashboardController implements Initializable {
     @FXML
     ImageView ImageAddUser;
     
-    // Product Tab Declaration;
-    @FXML
-    private JFXButton SaveProductButton, ResetProductButton;
-    
-    @FXML
-    private JFXTextField ProductIdTextField, ProductPriceTextField, ProductNameTextField, BrandTextField, SupplierTextField;
     
     /**
      * Initializes the controller class.
@@ -62,7 +56,9 @@ public class DashboardController implements Initializable {
         Image image = new Image("/Images/invoice.png");
         OrderImage.setImage(image);
         
+        // Order On Clicked Functionality.
         OrderImage.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            
             @Override
             public void handle(MouseEvent event) {
                 try {
@@ -113,6 +109,16 @@ public class DashboardController implements Initializable {
         ImageAddUser.setImage(AddNewImages);
     }    
     
+    
+    // Product Tab Declaration.
+    @FXML
+    private JFXButton SaveProductButton, ResetProductButton;
+    
+    // Product Text Field.
+    @FXML
+    private JFXTextField ProductIdTextField, ProductPriceTextField, ProductNameTextField, BrandTextField, SupplierTextField;
+    
+    
     /*
      * Save Product Functionality.
      * @param: event: ActionEvent
@@ -127,6 +133,8 @@ public class DashboardController implements Initializable {
         RequiredFieldValidator productPriceValidator = new RequiredFieldValidator(); 
         // Product Name Validator.
         RequiredFieldValidator productNameValidator = new RequiredFieldValidator(); 
+        // Product Trade Validator.
+        RequiredFieldValidator TradePriceValidator = new RequiredFieldValidator();
         // Brand Name Validator.
         RequiredFieldValidator BrandNameValidator = new RequiredFieldValidator();
         // Supplier Name Validator.
@@ -172,6 +180,7 @@ public class DashboardController implements Initializable {
             ProductNameTextField.validate();
         }
         
+    
         // Brand Name Text Field.
         if ( !BrandTextField.getText().isEmpty()) {
             productInformation.add(BrandTextField.getText()  );
@@ -187,15 +196,14 @@ public class DashboardController implements Initializable {
         }
         
         if ( productInformation.size() == 4 ) {
-            
         } else {
-            ProductPriceTextField.validate();
-            ProductNameTextField.validate();
-            BrandTextField.validate();
             SupplierTextField.validate();
+            BrandTextField.validate();
+            ProductNameTextField.validate();
+            ProductPriceTextField.validate();
+            ProductIdTextField.validate();
         }
     }
-    
     
     /*
      * Reset Product Functionality.
@@ -203,7 +211,6 @@ public class DashboardController implements Initializable {
      **/
     @FXML   
     private void resetProductFunction(ActionEvent event) {
-        // Product Fields.                
         ProductIdTextField.setText("");
         ProductPriceTextField.setText("");
         ProductNameTextField.setText("");
