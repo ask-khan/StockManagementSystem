@@ -33,12 +33,11 @@
                         <TableView layoutY="211.0" prefHeight="352.0" prefWidth="1403.0">
                           <columns>
                             <TableColumn minWidth="20.0" prefWidth="200.0" text="Product Id" />
-                              <TableColumn prefWidth="191.0" text="Product Name" />
-                              <TableColumn prefWidth="181.0" text="Brand" />
-                              <TableColumn prefWidth="204.0" text="Purchase Price" />
-                              <TableColumn prefWidth="412.0" text="Trade Price" />
-                              <TableColumn prefWidth="213.0" text="Supplier Name" />
-                              <TableColumn prefWidth="75.0" text="Column X" />
+                              <TableColumn prefWidth="274.0" text="Product Name" />
+                              <TableColumn prefWidth="225.0" text="Brand" />
+                              <TableColumn prefWidth="262.0" text="Purchase Price" />
+                              <TableColumn prefWidth="217.0" text="Supplier Name" />
+                              <TableColumn prefWidth="223.0" text="Created Date" />
                           </columns>
                         </TableView>
                      </children>
