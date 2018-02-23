@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="584.0" prefWidth="600.0" styleClass="mainFxmlClass" stylesheets="@../styles/orderList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.OrderlistController">
+   <children>
+      <TableView fx:id="orderListTableView" layoutY="114.0" prefHeight="470.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="orderId" prefWidth="65.0" text="Order Id" />
+          <TableColumn fx:id="orderName" prefWidth="174.0" text=" Order Name" />
+            <TableColumn fx:id="orderArea" prefWidth="122.0" text="Order Area" />
+            <TableColumn fx:id="orderAmount" prefWidth="113.0" text="Order Amount" />
+            <TableColumn fx:id="orderDate" prefWidth="124.0" text="Order Date" />
+        </columns>
+      </TableView>
+      <JFXTextField fx:id="voiceFilterTextField" labelFloat="true" layoutX="30.0" layoutY="43.0" prefHeight="25.0" prefWidth="209.0" promptText="Search Order" />
+      <Button fx:id="viewButton" layoutX="274.0" layoutY="43.0" mnemonicParsing="false" onAction="#viewButtonFunction" prefHeight="25.0" prefWidth="86.0" styleClass="buttonClass" stylesheets="@../styles/orderList.css" text="View" textFill="#fffefe" />
+      <Button fx:id="deleteButton" layoutX="400.0" layoutY="43.0" mnemonicParsing="false" onAction="#deleteButtonFunction" prefHeight="25.0" prefWidth="86.0" styleClass="buttonClass" stylesheets="@../styles/orderList.css" text="Delete" textFill="#fffefe" />
+   </children>
+</AnchorPane>

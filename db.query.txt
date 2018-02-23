@@ -20,6 +20,8 @@ CREATE TABLE products (
     productname text,
     brandname text,
     purchaseprice double precision,
+    tradeprice double precision,
+    productpacking integer,
     suppliername text,
     createddate timestamp,
     modifieddate timestamp
@@ -28,3 +30,91 @@ CREATE TABLE products (
 // Insert Table Product
 Insert into products ( productname, brandname, purchaseprice, suppliername, createddate , modifieddate  ) 
 values( 'Product A', 'Company A', 266.0, 'Ahmed Supplier Name', current_timestamp, current_timestamp );
+// Insert Table Product
+Insert into products ( productname, brandname, purchaseprice, suppliername, productpacking, tradeprice, createddate , modifieddate  ) 
+values(  'Product Name' , 'Brand Name' , '22', 'Supplier Name', '5', '100', current_timestamp, current_timestamp );
+
+
+// Invoice Table
+CREATE TABLE invoice (
+    id serial Primary key,
+    customerid text,
+    totalamount double,		
+    createddate timestamp,
+    modifieddate timestamp
+);
+// Insert Invoice Table
+Insert into invoice( customerid, totalamount, createddate, modifieddate ) values ( '123', 2331, current_timestamp, current_timestamp );
+
+
+// Create Invoice Product table
+CREATE TABLE invoiceproduct ( 
+  id serial Primary key,
+  productid text,
+  tradeprice double precision,
+  quanlity text,
+  invoiceid text,
+  amount text,
+  createddate timestamp,
+  modifieddate timestamp
+); 
+
+// Create invoice table 
+CREATE TABLE invoice (
+  id serial Primary key,
+  customername text,
+  area text,
+  datepicker text,
+  totalamount double precision,
+  createddate timestamp,
+  modifieddate timestamp
+);
+
+
+SELECT
+ *
+FROM
+ pg_catalog.pg_tables
+WHERE
+ schemaname != 'pg_catalog'
+AND schemaname != 'information_schema';
+
+// Customer Table.
+CREATE TABLE customer (
+    id serial Primary key,
+    customername text,
+    customercontact text,
+    customerarea text,
+    customeremailaddress text,
+    customeraddress text,
+    createddate timestamp,
+    modifieddate timestamp
+);
+
+// Stock Table.
+CREATE TABLE stock (
+    id serial Primary Key,
+    productid text,
+    productname text,
+    stockquanlity bigint,
+    stockFunction text,
+    createddate timestamp,
+    modifieddate timestamp
+);
+
+Select
+(Select SUM(stockquanlity) 
+ FROM stock 
+ WHERE productid='88') -
+(Select SUM(quanlity::integer) 
+From invoiceproduct 
+WHERE productid='88') ;
+
+
+Select ( Select SUM(stockquanlity) 
+ FROM stock 
+ WHERE productid='88' ) - 55;
+ 
+ Select ( Select SUM(stockquanlity) AS stockQuanlity
+ FROM stock 
+ WHERE productid= ( Select productid from stock where id=2 ) ) -55;

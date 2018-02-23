@@ -17,107 +17,83 @@
    <children>
       <JFXTabPane layoutY="110.0" prefHeight="318.0" prefWidth="803.0" styleClass="tabPanel" stylesheets="@../styles/dashboard.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="110.0">
          <tabs>
-            <Tab text="Products">
+            <Tab fx:id="tabPanelProduct" text="Products">
               <content>
                 <AnchorPane>
                      <children>
-                        <JFXTextField fx:id="ProductIdTextField" labelFloat="true" layoutX="43.0" layoutY="43.0" prefHeight="25.0" prefWidth="217.0" promptText="Product Id" />
-                        <JFXTextField fx:id="ProductNameTextField" labelFloat="true" layoutX="42.0" layoutY="98.0" prefHeight="25.0" prefWidth="219.0" promptText="Product Name" />
-                        <JFXTextField fx:id="BrandTextField" labelFloat="true" layoutX="43.0" layoutY="159.0" prefHeight="25.0" prefWidth="220.0" promptText="Brand" />
-                        <JFXTextField fx:id="ProductPriceTextField" labelFloat="true" layoutX="299.0" layoutY="44.0" prefHeight="25.0" prefWidth="237.0" promptText="Purchase Price" />
+                        <JFXTextField fx:id="ProductPackingTextField" labelFloat="true" layoutX="299.0" layoutY="40.0" prefHeight="25.0" prefWidth="235.0" promptText="Product Packing" />
+                        <JFXTextField fx:id="ProductNameTextField" labelFloat="true" layoutX="44.0" layoutY="40.0" prefHeight="25.0" prefWidth="219.0" promptText="Product Name" />
+                        <JFXTextField fx:id="BrandTextField" labelFloat="true" layoutX="43.0" layoutY="159.0" prefHeight="25.0" prefWidth="220.0" promptText="Brand Name" />
+                        <JFXTextField fx:id="ProductPriceTextField" labelFloat="true" layoutX="43.0" layoutY="98.0" prefHeight="25.0" prefWidth="221.0" promptText="Purchase Price" />
                         <JFXTextField fx:id="SupplierTextField" labelFloat="true" layoutX="299.0" layoutY="98.0" prefHeight="25.0" prefWidth="237.0" promptText="Supplier Name" />
                         <JFXButton fx:id="SaveProductButton" layoutX="595.0" layoutY="153.0" onAction="#saveProductFunction" prefHeight="31.0" prefWidth="91.0" styleClass="buttonClass" text="Save" textFill="#fcfafa" />
-                        <JFXTextField labelFloat="true" layoutX="791.0" layoutY="156.0" prefHeight="25.0" prefWidth="195.0" promptText="Delete Product" />
-                        <JFXButton layoutX="1024.0" layoutY="153.0" prefHeight="31.0" prefWidth="104.0" styleClass="buttonClass" text="Delete" textFill="WHITE" />
                         <JFXButton fx:id="ResetProductButton" layoutX="595.0" layoutY="93.0" onAction="#resetProductFunction" prefHeight="30.0" prefWidth="91.0" styleClass="buttonClass" text="Reset" textFill="#fcf8f8" />
-                        <TableView layoutY="211.0" prefHeight="352.0" prefWidth="1403.0">
+                        <TableView fx:id="productTable" layoutX="-1.0" layoutY="211.0" prefHeight="352.0" prefWidth="1365.0">
                           <columns>
-                            <TableColumn minWidth="20.0" prefWidth="200.0" text="Product Id" />
-                              <TableColumn prefWidth="191.0" text="Product Name" />
-                              <TableColumn prefWidth="181.0" text="Brand" />
-                              <TableColumn prefWidth="204.0" text="Purchase Price" />
-                              <TableColumn prefWidth="412.0" text="Trade Price" />
-                              <TableColumn prefWidth="213.0" text="Supplier Name" />
-                              <TableColumn prefWidth="75.0" text="Column X" />
+                              <TableColumn fx:id="productCode" prefWidth="94.0" text="Product Id" />
+                              <TableColumn fx:id="productName" prefWidth="187.0" text="Product Name" />
+                              <TableColumn fx:id="productPacking" prefWidth="109.0" text="Packing" />
+                              <TableColumn fx:id="brandName" prefWidth="226.0" text="Brand Name" />
+                              <TableColumn fx:id="purchasedPrice" prefWidth="132.0" text="Purchased Price" />
+                              <TableColumn fx:id="supplierName" minWidth="0.0" prefWidth="227.0" text="Supplier Name" />
+                              <TableColumn fx:id="tradePrice" prefWidth="97.0" text="Trade Price" />
+                              <TableColumn fx:id="createdDate" prefWidth="272.0" text="Created Date" />
                           </columns>
                         </TableView>
+                        <JFXTextField fx:id="TradePriceTextField" labelFloat="true" layoutX="299.0" layoutY="159.0" prefHeight="25.0" prefWidth="240.0" promptText="Trade Price" />
+                        <Button fx:id="deleteButton" layoutX="1041.0" layoutY="155.0" mnemonicParsing="false" onAction="#ButtonDeleteAction" prefHeight="27.0" prefWidth="96.0" styleClass="buttonClass" text="Delete " textFill="#fffefe" />
+                        <JFXTextField fx:id="ProductIdTextField" layoutX="771.0" layoutY="156.0" prefHeight="25.0" prefWidth="205.0" promptText="Product Id" />
                      </children>
                   </AnchorPane>
               </content>
             </Tab>
-            <Tab text="Stocks">
+            <Tab fx:id="tabPanelStock" text="Stocks">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <JFXTextField labelFloat="true" layoutX="74.0" layoutY="32.0" prefHeight="25.0" prefWidth="330.0" promptText="Product ID" />
-                        <JFXTextField labelFloat="true" layoutX="75.0" layoutY="95.0" prefHeight="25.0" prefWidth="330.0" promptText="Quanlity" />
-                        <JFXButton layoutX="473.0" layoutY="32.0" prefHeight="25.0" prefWidth="155.0" styleClass="buttonClass" text="New Stock" textFill="#fffefe" />
+                        <JFXTextField fx:id="addStockTextField" labelFloat="true" layoutX="67.0" layoutY="156.0" prefHeight="25.0" prefWidth="338.0" promptText="Add Stock" />
+                        <JFXTextField fx:id="currentStockTextField" editable="false" labelFloat="true" layoutX="65.0" layoutY="95.0" prefHeight="25.0" prefWidth="340.0" promptText="Current Stock" />
+                        <JFXButton fx:id="newStockButton" layoutX="473.0" layoutY="32.0" onAction="#newStockFunction" prefHeight="25.0" prefWidth="155.0" styleClass="buttonClass" text="New Stock" textFill="#fffefe" />
                         <JFXButton layoutX="473.0" layoutY="95.0" prefHeight="25.0" prefWidth="156.0" styleClass="buttonClass" text="Return Stock" textFill="#fffefe" />
                         <JFXTextField labelFloat="true" layoutX="724.0" layoutY="156.0" prefHeight="25.0" prefWidth="285.0" promptText="Delete Stock" />
-                        <JFXButton layoutX="1043.0" layoutY="156.0" prefHeight="25.0" prefWidth="141.0" styleClass="buttonClass" text="Delete Stock" textFill="WHITE" />
-                        <JFXComboBox layoutX="74.0" layoutY="156.0" prefHeight="25.0" prefWidth="336.0" promptText="Select Purchased Type" />
-                        <TableView layoutX="-1.0" layoutY="202.0" prefHeight="353.0" prefWidth="1403.0">
+                        <JFXButton fx:id="deleteStockButton" layoutX="1043.0" layoutY="156.0" onAction="#deleteStockFunction" prefHeight="25.0" prefWidth="141.0" styleClass="buttonClass" text="Delete Stock" textFill="WHITE" />
+                        <JFXComboBox fx:id="productNameComboBox" labelFloat="true" layoutX="68.0" layoutY="20.0" onAction="#productCumboBoxFunction" prefHeight="25.0" prefWidth="336.0" promptText="Select Product Name" />
+                        <TableView fx:id="stockTableView" layoutX="-1.0" layoutY="202.0" prefHeight="353.0" prefWidth="1403.0">
                           <columns>
-                            <TableColumn prefWidth="171.0" text="Id" />
-                            <TableColumn minWidth="0.0" prefWidth="264.0" text="Product Id" />
-                              <TableColumn prefWidth="235.0" text="Name" />
-                              <TableColumn prefWidth="288.0" text="Quanlity" />
-                              <TableColumn prefWidth="227.0" text="Purchased Type" />
-                              <TableColumn prefWidth="217.0" text="Status" />
+                            <TableColumn fx:id="stockIdColumns" prefWidth="171.0" text="Stock Id" />
+                            <TableColumn fx:id="stockProductNameColumns" minWidth="0.0" prefWidth="411.0" text="Product Name" />
+                              <TableColumn fx:id="stockQuanlityColumns" prefWidth="232.0" text="Stock Quanlity" />
+                              <TableColumn fx:id="stockFunctionColumns" prefWidth="221.0" text="Function" />
+                              <TableColumn fx:id="stockModifiedDateColumns" minWidth="0.0" prefWidth="158.0" text="Modified Date" />
+                              <TableColumn fx:id="stockCreatedDateColumns" prefWidth="209.0" text="Created Date" />
                           </columns>
                         </TableView>
                      </children></AnchorPane>
               </content>
             </Tab>
-            <Tab text="Supplier">
+            <Tab fx:id="tabPanelCustomers" text="Customers">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <JFXTextField labelFloat="true" layoutX="71.0" layoutY="56.0" prefHeight="25.0" prefWidth="277.0" promptText="Supplier Id" />
-                        <JFXTextField labelFloat="true" layoutX="69.0" layoutY="122.0" prefHeight="25.0" prefWidth="280.0" promptText="Name" />
-                        <JFXTextField layoutX="65.0" layoutY="187.0" prefHeight="25.0" prefWidth="287.0" promptText="Address" />
-                        <JFXTextField labelFloat="true" layoutX="454.0" layoutY="56.0" prefHeight="25.0" prefWidth="276.0" promptText="Contact No" />
-                        <JFXTextField labelFloat="true" layoutX="454.0" layoutY="122.0" prefHeight="25.0" prefWidth="281.0" promptText="Email Address" />
-                        <JFXButton layoutX="454.0" layoutY="187.0" prefHeight="25.0" prefWidth="136.0" styleClass="buttonClass" text="Save" textFill="#fffefe" />
-                        <JFXButton layoutX="617.0" layoutY="187.0" prefHeight="25.0" prefWidth="128.0" styleClass="buttonClass" text="Reset" textFill="WHITE" />
-                        <JFXTextField labelFloat="true" layoutX="817.0" layoutY="181.0" prefHeight="25.0" prefWidth="254.0" promptText="Delete Suppiler" />
-                        <JFXButton layoutX="1101.0" layoutY="181.0" prefHeight="25.0" prefWidth="137.0" styleClass="buttonClass" text="Delete" textFill="WHITE" />
-                        <TableView layoutY="242.0" prefHeight="312.0" prefWidth="1403.0">
+                        <JFXTextField fx:id="customerAreaTextField" labelFloat="true" layoutX="59.0" layoutY="128.0" prefHeight="25.0" prefWidth="287.0" promptText="Area" />
+                        <JFXTextField fx:id="customerAddress" labelFloat="true" layoutX="58.0" layoutY="197.0" prefHeight="25.0" prefWidth="287.0" promptText="Address" />
+                        <JFXTextField fx:id="customerContactTextField" labelFloat="true" layoutX="403.0" layoutY="63.0" prefHeight="25.0" prefWidth="247.0" promptText="Contact" />
+                        <JFXTextField fx:id="customerEmailAddress" labelFloat="true" layoutX="403.0" layoutY="128.0" prefHeight="25.0" prefWidth="252.0" promptText="Email Address" />
+                        <JFXButton fx:id="saveCustomerButton" layoutX="412.0" layoutY="197.0" onAction="#saveCustomerFunction" prefHeight="25.0" prefWidth="132.0" styleClass="buttonClass" text="Save" textFill="#fcf9f9" />
+                        <JFXButton fx:id="resetCustomerButton" layoutX="587.0" layoutY="197.0" onAction="#resetCustomerFunction" prefHeight="25.0" prefWidth="136.0" styleClass="buttonClass" text="Reset" textFill="#fcf9f9" />
+                        <JFXTextField fx:id="customerIdTextField" labelFloat="true" layoutX="799.0" layoutY="197.0" prefHeight="25.0" prefWidth="232.0" />
+                        <JFXButton fx:id="deleteCustomerButton" layoutX="1070.0" layoutY="197.0" onAction="#deleteCustomerFunctionality" prefHeight="25.0" prefWidth="128.0" styleClass="buttonClass" text="Delete" textFill="#fffdfd" />
+                        <TableView fx:id="customerTableView" layoutY="261.0" prefHeight="295.0" prefWidth="1403.0">
                           <columns>
-                            <TableColumn prefWidth="172.0" text="Id" />
-                            <TableColumn prefWidth="160.0" text="Supplier_Id" />
-                              <TableColumn prefWidth="204.0" text="Name" />
-                              <TableColumn prefWidth="402.0" text="Address" />
-                              <TableColumn prefWidth="195.0" text="Contact No" />
-                              <TableColumn prefWidth="269.0" text="Email Address" />
+                            <TableColumn fx:id="customerIdTableColumns" prefWidth="148.0" text="Customer Id" />
+                            <TableColumn fx:id="customerNameTableColumns" prefWidth="213.0" text="Customer Name" />
+                              <TableColumn fx:id="customerContactTableColumns" prefWidth="209.0" text="Contact" />
+                              <TableColumn fx:id="customerEmailAddressTableColumns" prefWidth="296.0" text="Email Address" />
+                              <TableColumn fx:id="customerAddressTableColumns" prefWidth="239.0" text="Address" />
+                              <TableColumn fx:id="customerAreaTableColumns" prefWidth="297.0" text="Area" />
                           </columns>
                         </TableView>
-                     </children></AnchorPane>
-              </content>
-            </Tab>
-            <Tab text="Customers">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <JFXTextField labelFloat="true" layoutX="57.0" layoutY="63.0" prefHeight="25.0" prefWidth="287.0" promptText="Customer Id" />
-                        <JFXTextField labelFloat="true" layoutX="59.0" layoutY="128.0" prefHeight="25.0" prefWidth="287.0" promptText="Name" />
-                        <JFXTextField labelFloat="true" layoutX="58.0" layoutY="197.0" prefHeight="25.0" prefWidth="287.0" promptText="Address" />
-                        <JFXTextField labelFloat="true" layoutX="403.0" layoutY="63.0" prefHeight="25.0" prefWidth="247.0" promptText="Contact" />
-                        <JFXTextField labelFloat="true" layoutX="403.0" layoutY="128.0" prefHeight="25.0" prefWidth="252.0" promptText="Email Address" />
-                        <JFXButton layoutX="412.0" layoutY="197.0" prefHeight="25.0" prefWidth="132.0" styleClass="buttonClass" text="Save" textFill="#fcf9f9" />
-                        <JFXButton layoutX="587.0" layoutY="197.0" prefHeight="25.0" prefWidth="136.0" styleClass="buttonClass" text="Reset" textFill="#fcf9f9" />
-                        <JFXTextField labelFloat="true" layoutX="799.0" layoutY="197.0" prefHeight="25.0" prefWidth="232.0" promptText="Delete Customer Id" />
-                        <JFXButton layoutX="1070.0" layoutY="197.0" prefHeight="25.0" prefWidth="128.0" styleClass="buttonClass" text="Delete" textFill="#fffdfd" />
-                        <TableView layoutY="261.0" prefHeight="295.0" prefWidth="1403.0">
-                          <columns>
-                            <TableColumn prefWidth="148.0" text="Id" />
-                            <TableColumn prefWidth="213.0" text="Customer Id" />
-                              <TableColumn prefWidth="209.0" text="Name" />
-                              <TableColumn prefWidth="296.0" text="Address" />
-                              <TableColumn prefWidth="315.0" text="Email Address" />
-                              <TableColumn prefWidth="221.0" text="Contact" />
-                          </columns>
-                        </TableView>
+                        <JFXTextField fx:id="customerNameTextField" labelFloat="true" layoutX="58.0" layoutY="63.0" prefHeight="25.0" prefWidth="287.0" promptText="Customer Name" />
                      </children></AnchorPane>
               </content>
             </Tab>
@@ -134,18 +110,18 @@
          </font>
       </Label>
       <ImageView fx:id="OrderImage" fitHeight="60.0" fitWidth="66.0" layoutX="26.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
-      <Label layoutX="147.0" layoutY="19.0" prefHeight="17.0" prefWidth="102.0" text="Receive Payment">
+      <Label layoutX="147.0" layoutY="19.0" prefHeight="17.0" prefWidth="102.0" text="Order List">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <ImageView fx:id="ImageReceivePayment" fitHeight="60.0" fitWidth="102.0" layoutX="141.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ImageReceivePayment" fitHeight="60.0" fitWidth="102.0" layoutX="273.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
       <Label layoutX="279.0" layoutY="19.0" prefHeight="17.0" prefWidth="96.0" text="Sale Summary">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <ImageView fx:id="ImageSalesSummary" fitHeight="60.0" fitWidth="96.0" layoutX="279.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="ImageOrderList" fitHeight="60.0" fitWidth="96.0" layoutX="150.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true" />
       <Label layoutX="416.0" layoutY="19.0" prefHeight="17.0" prefWidth="96.0" text="Payment Log">
          <font>
             <Font name="System Bold" size="12.0" />

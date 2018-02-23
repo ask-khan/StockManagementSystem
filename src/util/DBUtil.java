@@ -17,20 +17,18 @@ public class DBUtil {
     private final String user = "postgres";
     private final String password = "admin";
     
-    public Statement DbConnection () throws ClassNotFoundException {
+    public Connection DbConnection () throws ClassNotFoundException {
         try {
             Class.forName("org.postgresql.Driver");
             // getConnection.    
             connection = DriverManager.getConnection( url, user, password);
-            connection.setAutoCommit(false);
-            state = connection.createStatement();
             
         } catch (SQLException e) {
 
             e.printStackTrace();
             
         }
-        return state;
+        return connection;
     }
     
 }

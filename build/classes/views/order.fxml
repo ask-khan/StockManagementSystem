@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import com.jfoenix.controls.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
@@ -27,32 +28,33 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <TextField fx:id="customerName" layoutX="40.0" layoutY="62.0" prefHeight="29.0" prefWidth="390.0" promptText="Customer Name" />
-        <TextField fx:id="billNo" layoutX="487.0" layoutY="62.0" prefHeight="29.0" prefWidth="219.0" promptText="Bill No" />
         <DatePicker fx:id="datePicker" layoutX="746.0" layoutY="64.0" prefHeight="29.0" prefWidth="219.0" />
-        <Label layoutX="40.0" layoutY="165.0" prefHeight="39.0" prefWidth="205.0" text="Add Products:">
-
-        </Label>
-        <ChoiceBox fx:id="productLine" layoutX="40.0" layoutY="220.0" prefHeight="29.0" prefWidth="390.0" />
-        <TextField fx:id="quanlity" layoutX="487.0" layoutY="220.0" prefHeight="29.0" prefWidth="219.0" promptText="Quanlity" />
-        <TextField fx:id="tradePrice" layoutX="746.0" layoutY="220.0" prefHeight="29.0" prefWidth="219.0" promptText="Trade Price" />
-        <Label layoutX="40.0" layoutY="117.0" prefHeight="29.0" prefWidth="161.0" text="Discount Package:">
-         
-        </Label>
-        <ChoiceBox fx:id="discountPackage" layoutX="201.0" layoutY="119.0" prefHeight="25.0" prefWidth="219.0" />
         <TextField fx:id="individualDiscount" layoutX="40.0" layoutY="285.0" prefHeight="29.0" prefWidth="205.0" promptText="Discount" visible="false" />
-        <TableView fx:id="productTable" layoutX="7.0" layoutY="347.0" prefHeight="332.0" prefWidth="801.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="199.0">
+        <TableView fx:id="invoiceProductTable" layoutX="7.0" layoutY="347.0" prefHeight="332.0" prefWidth="801.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="199.0">
             <columns>
-                <TableColumn fx:id="productName" prefWidth="232.0" text="Product Name" />
-                <TableColumn fx:id="productPacking" prefWidth="103.0" text="Package" />
-                <TableColumn fx:id="productTradePrice" minWidth="0.0" prefWidth="102.0" text="Trade Price" />
-                <TableColumn fx:id="productDiscount" minWidth="0.0" prefWidth="102.0" text="Discount" />
-                <TableColumn fx:id="productBonus" prefWidth="92.0" text="Bonus" />
-                <TableColumn fx:id="productQuanlity" prefWidth="85.0" text="Quanlity" />
-                <TableColumn fx:id="productAmount" minWidth="0.0" prefWidth="83.0" text="Amount" />
+                <TableColumn fx:id="productId" prefWidth="84.0" text="Product Id" />
+                <TableColumn fx:id="productName" prefWidth="224.0" text="Product Name" />
+                <TableColumn fx:id="productPacking" prefWidth="118.0" text="Package" />
+                <TableColumn fx:id="productTradePrice" minWidth="0.0" prefWidth="120.0" text="Trade Price" />
+                <TableColumn fx:id="productQuanlity" prefWidth="100.0" text="Quanlity" />
+                <TableColumn fx:id="productAmount" minWidth="0.0" prefWidth="142.0" text="Amount" />
             </columns>
         </TableView>
-        <TextField fx:id="combineDiscount" layoutX="816.0" layoutY="507.0" prefHeight="29.0" prefWidth="169.0" promptText="Combine Discount" />
+      <JFXComboBox fx:id="productLineComboBox" labelFloat="true" layoutX="40.0" layoutY="165.0" onAction="#productListComboBoxFunctionality" prefHeight="25.0" prefWidth="390.0" promptText="Product Name" />
+      <JFXTextField fx:id="quanlityTextField" labelFloat="true" layoutX="612.0" layoutY="165.0" prefHeight="25.0" prefWidth="98.0" promptText="Quanlity" />
+      <JFXTextField fx:id="tradePriceTextField" labelFloat="true" layoutX="40.0" layoutY="238.0" prefHeight="25.0" prefWidth="390.0" promptText="Trade Price" />
+      <JFXTextField fx:id="areaTextField" labelFloat="true" layoutX="487.0" layoutY="66.0" prefHeight="25.0" prefWidth="219.0" promptText="Area" />
+      <TextField fx:id="totalAmountTextField" layoutX="40.0" layoutY="285.0" prefHeight="44.0" prefWidth="390.0" promptText="Total Amount">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font></TextField>
+      <Button fx:id="AddProductButton" layoutX="487.0" layoutY="236.0" mnemonicParsing="false" onAction="#addProductInvoiceFunction" prefHeight="29.0" prefWidth="167.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Add Product" textFill="#f5f0f0" />
+      <Button fx:id="GenerateInvoiceButton" layoutX="822.0" layoutY="581.0" mnemonicParsing="false" onAction="#GenerateInvoiceButtonFunction" prefHeight="25.0" prefWidth="167.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Generate Invoice" textFill="#f5f3f3" />
+      <JFXTextField fx:id="productPackingTextField" labelFloat="true" layoutX="746.0" layoutY="165.0" prefHeight="25.0" prefWidth="219.0" promptText="Packing" />
+      <Button fx:id="deleteProductButton" layoutX="751.0" layoutY="302.0" mnemonicParsing="false" onAction="#ProductDeleteInvoiceButton" prefHeight="25.0" prefWidth="167.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Delete" textFill="#fffefe" />
+      <JFXComboBox fx:id="customerNameTextField" labelFloat="true" layoutX="39.0" layoutY="66.0" onAction="#customerCumboBoxFunction" prefHeight="25.0" prefWidth="390.0" promptText="Customer Name" />
+      <TextField fx:id="invoiceId" layoutX="746.0" layoutY="238.0" prefHeight="29.0" prefWidth="219.0" promptText="Invoice Id" visible="false" />
+      <JFXTextField fx:id="stockTextField" editable="false" labelFloat="true" layoutX="487.0" layoutY="165.0" prefHeight="25.0" prefWidth="98.0" promptText="Stock " />
         
     </children>
 </AnchorPane>

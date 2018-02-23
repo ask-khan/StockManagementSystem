@@ -28,6 +28,7 @@ public class StockManagmentSystem extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
         stage.setTitle("Stock Management System");
         stage.getIcons().add( new Image("file:user-icon.png"));
+        stage.setResizable(false);
         Scene scene = new Scene(root, 400, 300);
         scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);

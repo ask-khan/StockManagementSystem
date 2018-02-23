@@ -5,6 +5,7 @@
  */
 package models;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,31 +17,35 @@ import util.DBUtil;
  * @author Ahmed
  */
 public class LoginModel {
-    
-    
+
     /**
-    * LoginFunctionality.
-    * @param userInformation ArrayList username/ password.
-    * @author Ahmed
-    */
-    
-    public boolean loginFunctionality( ArrayList<String>  userInformation ) throws SQLException, ClassNotFoundException{
-        
+     * LoginFunctionality.
+     *
+     * @param userInformation ArrayList username/ password.
+     * @author Ahmed
+     * @return
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
+     */
+    public boolean loginFunctionality(ArrayList<String> userInformation) throws SQLException, ClassNotFoundException {
+
         boolean checkExist = false;
-        
+
         DBUtil dbObject = new DBUtil();
-        Statement statementObject = dbObject.DbConnection();
-        
+        Connection connection = dbObject.DbConnection();
+        connection.setAutoCommit(false);
+        Statement statementObject = connection.createStatement();
+        // User Login Query 
         String userLoginSql = "SELECT count(username) As total FROM users WHERE username='" + userInformation.get(0) + "' AND password='" + userInformation.get(1) + "'";
-        ResultSet resultSet = statementObject.executeQuery( userLoginSql );
-        
+        ResultSet resultSet = statementObject.executeQuery(userLoginSql);
+
         if (resultSet.next()) {
             // count.
-            if ( resultSet.getInt("total") == 1 ) {
+            if (resultSet.getInt("total") == 1) {
                 checkExist = true;
-            } 
+            }
         }
         return checkExist;
     }
-    
+
 }
