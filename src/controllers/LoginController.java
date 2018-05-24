@@ -93,9 +93,9 @@ public class LoginController implements Initializable {
                 Stage stage  = new Stage();
                 stage.setTitle("Main Dashboard");
                 stage.getIcons().add( new Image("file:user-icon.png"));
-                Scene scene = new Scene(root);
+                Scene scene = new Scene(root , 1024, 768);
                 scene.getStylesheets().add(getClass().getResource("/styles/dashboard.css").toExternalForm());
-                stage.setMaximized(true);
+                //stage.setMaximized(true);
                 //stage.setFullScreen(true);
                 stage.setScene(scene);
                 stage.show();

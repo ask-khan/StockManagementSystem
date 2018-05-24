@@ -11,6 +11,7 @@ import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
 import handler.ProductTable;
 import handler.StockTable;
+import handler.ValidationDialog;
 import handler.customerTable;
 import java.io.IOException;
 import java.net.URL;
@@ -33,6 +34,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,6 +46,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.CustomerModel;
 import models.DashboardModel;
+import models.OrderModel;
 import models.StockModel;
 
 /**
@@ -53,16 +56,18 @@ import models.StockModel;
  */
 public class DashboardController implements Initializable {
 
-    // Declare product and stock panel.
+    // Declare product ,stock, customer and dashboard panel.
     @FXML
-    private Tab tabPanelProduct, tabPanelStock, tabPanelCustomers;
-    
+    private Tab tabPanelProduct, tabPanelStock, tabPanelCustomers, tabPanelDashboard;
+
     // Declare product price list.
+
     /**
      *
      */
     @FXML
     public ArrayList<String> productPriceList = new ArrayList<>();
+
     // Declare product packing list.
 
     /**
@@ -70,6 +75,7 @@ public class DashboardController implements Initializable {
      */
     @FXML
     public ArrayList<String> productPackingList = new ArrayList<>();
+
     // Declare product selected id.
 
     /**
@@ -90,7 +96,7 @@ public class DashboardController implements Initializable {
     @FXML
     ImageView imageLogout;
     @FXML
-    ImageView ImageAddUser;
+    ImageView ImageAddUser, ImagePrintSettings, customerViewImage;
 
     // Declare delete customer button.
     @FXML
@@ -107,14 +113,13 @@ public class DashboardController implements Initializable {
     // Declare tableview customerTable.
     @FXML
     private TableView<customerTable> customerTableView = new TableView<customerTable>();
-    
-    
+
     // Declare stock id columns for stock table columns. 
     @FXML
     private TableColumn<StockTable, Integer> stockIdColumns;
     // Declare stock product name columns for stock table columns. 
     @FXML
-    private TableColumn<StockTable, String> stockProductNameColumns, stockModifiedDateColumns, stockCreatedDateColumns, stockFunctionColumns;
+    private TableColumn<StockTable, String> stockProductNameColumns, stockModifiedDateColumns, stockCreatedDateColumns, stockFunctionColumns, stockExpiredDateColumns, stockBatchNoColumns;
     // Declare stock product name columns for stock quanlity columns.
     @FXML
     private TableColumn<StockTable, Integer> stockQuanlityColumns;
@@ -169,8 +174,10 @@ public class DashboardController implements Initializable {
     // Created Date
     @FXML
     private TableColumn<ProductTable, String> createdDate;
-    
-    
+    // Prodcut Type.
+    @FXML
+    private TableColumn<ProductTable, String> productTypes;
+
     // Declare Observabilelist.
     @FXML
     private final ObservableList<ProductTable> productData = FXCollections.observableArrayList();
@@ -184,15 +191,23 @@ public class DashboardController implements Initializable {
     // Declare Delete, Reset Button.
     @FXML
     private Button deleteButton, resetCustomerButton;
-    
+
     // Product Tab Declaration.
     @FXML
     private JFXButton SaveProductButton, ResetProductButton, deleteStockButton;
 
     // Product Text Field.
     @FXML
-    private JFXTextField ProductPriceTextField, ProductNameTextField, BrandTextField, SupplierTextField, TradePriceTextField, ProductPackingTextField, ProductIdTextField;
+    private JFXTextField ProductPriceTextField, ProductNameTextField, BrandTextField, SupplierTextField, TradePriceTextField, ProductPackingTextField, ProductIdTextField, batchNoTextField;
     
+    @FXML
+    private DatePicker expiredDateDatePicker;
+    
+    // Declare Cumbo Box Product Type.
+    @FXML
+    private JFXComboBox  productType;
+    
+    public ValidationDialog validationDialog = new ValidationDialog();
     /**
      * Initializes the controller class.
      *
@@ -202,19 +217,25 @@ public class DashboardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
+        ObservableList<String> options = 
+        FXCollections.observableArrayList(
+            "Nutraceutical",
+            "Pharmaceutical"
+        );
+        
+        productType.setItems(options);
         // get on select stock data function call.
         getOnSelectStockData();
-        
+
         // get on select product data function call.
         getOnSelectProductData();
 
         // get Select Customer Data Function Call.
         getOnSelectCustomerData();
-        
-        
+
         // Onload Delete Stock Button Functionality.
-        deleteStockButton.disableProperty().bind( Bindings.isEmpty(stockTableView.getSelectionModel().getSelectedItems()));
-        
+        deleteStockButton.disableProperty().bind(Bindings.isEmpty(stockTableView.getSelectionModel().getSelectedItems()));
+
         // Onload Delete Customer Button Functionality.
         deleteCustomerButton.disableProperty().bind(Bindings.isEmpty(customerTableView.getSelectionModel().getSelectedItems()));
 
@@ -223,6 +244,60 @@ public class DashboardController implements Initializable {
 
         Image image = new Image("/Images/invoice.png");
         OrderImage.setImage(image);
+
+        Image image1 = new Image("/Images/printer-.png");
+        ImagePrintSettings.setImage(image1);
+
+        Image customerView = new Image("/Images/customer-view.png");
+        customerViewImage.setImage(customerView);
+
+        customerViewImage.setOnMouseClicked(new EventHandler<MouseEvent>(){
+            
+            @Override
+            public void handle(MouseEvent event){
+                try {
+                    Node source = (Node) event.getSource();
+                    Parent root = FXMLLoader.load(DashboardController.this.getClass().getResource("/views/customerView.fxml"));
+                    Stage stage = new Stage();
+                    stage.setTitle("Customer View");
+                    stage.getIcons().add(new Image("file:user-icon.png"));
+                    stage.setResizable(false);
+                    stage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(root, 1000, 700);
+                    stage.initOwner(source.getScene().getWindow());
+                    scene.getStylesheets().add(DashboardController.this.getClass().getResource("/styles/customerview.css").toExternalForm());
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+                
+            
+        });
+        
+        ImagePrintSettings.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent event) {
+                try {
+                    Node source = (Node) event.getSource();
+                    Parent root = FXMLLoader.load(DashboardController.this.getClass().getResource("/views/printSetting.fxml"));
+                    Stage stage = new Stage();
+                    stage.setTitle("Print Setting");
+                    stage.getIcons().add(new Image("file:user-icon.png"));
+                    stage.setResizable(false);
+                    stage.initModality(Modality.WINDOW_MODAL);
+                    Scene scene = new Scene(root);
+                    stage.initOwner(source.getScene().getWindow());
+                    scene.getStylesheets().add(DashboardController.this.getClass().getResource("/styles/order.css").toExternalForm());
+                    stage.setScene(scene);
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
 
         // Customer id set visible
         customerIdTextField.setVisible(false);
@@ -254,17 +329,35 @@ public class DashboardController implements Initializable {
         });
 
         // Set Payment Image.
-        Image paymentImage = new Image("/Images/payment.png");
+        Image paymentImage = new Image("/Images/report.png");
         ImageReceivePayment.setImage(paymentImage);
+        
+        // Image Logout On Mouse Clicked.        
+        ImageReceivePayment.setOnMouseClicked((MouseEvent event) -> {
+            try {
+                //((Node) (event.getSource())).getScene().getWindow().hide();
+                Parent root = FXMLLoader.load(getClass().getResource("/views/report.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Generate Report");
+                stage.getIcons().add(new Image("file:user-icon.png"));
+                stage.setResizable(false);
+                Scene scene = new Scene(root);
+                scene.getStylesheets().add(getClass().getResource("/styles/report.css").toExternalForm());
+                stage.setScene(scene);
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
 
         // Set Sale Summary Image.
         Image salesSummaryImage = new Image("/Images/sale-report.png");
         ImageOrderList.setImage(salesSummaryImage);
 
         // Credit Card Image.
-        Image paymentLogImage = new Image("/Images/credit-card.png");
-        ImagePaymentLog.setImage(paymentLogImage);
-
+        //Image paymentLogImage = new Image("/Images/credit-card.png");
+        //ImagePaymentLog.setImage(paymentLogImage);
         // Logout Image.
         Image logoutImages = new Image("/Images/logout.png");
         imageLogout.setImage(logoutImages);
@@ -314,9 +407,6 @@ public class DashboardController implements Initializable {
             }
         });
 
-        // Set Add New Images.
-        Image AddNewImages = new Image("/Images/add-user.png");
-        ImageAddUser.setImage(AddNewImages);
         
         // Set Value for stock table.
         stockIdColumns.setCellValueFactory(new PropertyValueFactory<StockTable, Integer>("stockIdColumns"));
@@ -325,8 +415,10 @@ public class DashboardController implements Initializable {
         stockFunctionColumns.setCellValueFactory(new PropertyValueFactory<StockTable, String>("stockFunctionColumns"));
         stockModifiedDateColumns.setCellValueFactory(new PropertyValueFactory<StockTable, String>("stockModifiedDateColumns"));
         stockCreatedDateColumns.setCellValueFactory(new PropertyValueFactory<StockTable, String>("stockCreatedDateColumns"));
+        stockExpiredDateColumns.setCellValueFactory(new PropertyValueFactory<StockTable, String>("stockExpiredDateColumns"));
+        stockBatchNoColumns.setCellValueFactory(new PropertyValueFactory<StockTable, String>("stockBatchNoColumns"));
         stockTableView.setItems(stockData);
-        
+
         // Set Values for product table.
         tradePrice.setCellValueFactory(new PropertyValueFactory<ProductTable, Float>("tradePrice"));
         productCode.setCellValueFactory(new PropertyValueFactory<ProductTable, Integer>("productCode"));
@@ -336,6 +428,7 @@ public class DashboardController implements Initializable {
         purchasedPrice.setCellValueFactory(new PropertyValueFactory<ProductTable, Float>("purchasedPrice"));
         supplierName.setCellValueFactory(new PropertyValueFactory<ProductTable, String>("supplierName"));
         createdDate.setCellValueFactory(new PropertyValueFactory<ProductTable, String>("createdDate"));
+        productTypes.setCellValueFactory(new PropertyValueFactory<ProductTable, String>("productTypes"));
 
         productTable.setItems(productData);
 
@@ -368,29 +461,30 @@ public class DashboardController implements Initializable {
                 customerData.remove(customerTableObject);
             }
         });
-        
+
         // Tab Product Panel.
         tabPanelProduct.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
-                
+
                 if (tabPanelProduct.isSelected()) {
                     // get on select product data function call.
+                    SupplierTextField.setText("Minart Traders");
                     getOnSelectProductData();
-                    
+
                 }
             }
         });
-        
+
         // Tab Stock Panel.
         tabPanelStock.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
-                
+
                 if (tabPanelStock.isSelected()) {
                     // get on select stock data function call.
                     getOnSelectStockData();
-                    
+                    getOnSelectProductData();
                 }
             }
         });
@@ -399,20 +493,24 @@ public class DashboardController implements Initializable {
         tabPanelCustomers.setOnSelectionChanged(new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
-                
+
                 if (tabPanelCustomers.isSelected()) {
                     // get on select customer data function call.
                     getOnSelectCustomerData();
-                    
+
                 }
             }
         });
     }
-    
-    public void getOnSelectProductData(){
+
+    /**
+     *
+     */
+    public void getOnSelectProductData() {
         // product table clear.
         productTable.getItems().clear();
-        
+        productSelectedId.clear();
+
         // Onload product data on table view.
         DashboardModel dashboardModel = new DashboardModel();
         try {
@@ -420,7 +518,7 @@ public class DashboardController implements Initializable {
             ObservableList<String> productList = FXCollections.observableArrayList();
             while (resultSet.next()) {
                 // Create Product Object.
-                ProductTable productObject = new ProductTable(resultSet.getInt("id"), resultSet.getInt("productpacking"), (float) resultSet.getDouble("tradeprice"), resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("modifieddate"));
+                ProductTable productObject = new ProductTable(resultSet.getInt("id"), resultSet.getInt("productpacking"), (float) resultSet.getDouble("tradeprice"), resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("productype"), resultSet.getString("modifieddate"));
                 // Product Add Table.
                 productData.add(productObject);
 
@@ -434,18 +532,24 @@ public class DashboardController implements Initializable {
             Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     // get on select stock data.
+
+    /**
+     *
+     */
     public void getOnSelectStockData() {
+        System.out.println( "getOnSelectStockData");
         // stock table view clear.
         stockTableView.getItems().clear();
-        
+
         // Onload stock data on table view.
         StockModel stockModel = new StockModel();
         try {
             ResultSet resultSet = stockModel.getAllStockData();
-            while ( resultSet.next() ) {
-                StockTable stockTable = new StockTable(resultSet.getInt("id"), resultSet.getString("productname"), resultSet.getInt("stockquanlity"), resultSet.getString("modifieddate"), resultSet.getString("createddate"), resultSet.getString("stockfunction"));
+            while (resultSet.next()) {
+                StockTable stockTable = new StockTable(resultSet.getInt("id"), resultSet.getString("productname"), resultSet.getInt("stockquanlity"), resultSet.getString("modifieddate"), resultSet.getString("createddate"), resultSet.getString("stockfunction"), resultSet.getString("expireddate"), resultSet.getString("batchno"));
+                
                 stockData.add(stockTable);
             }
         } catch (ClassNotFoundException ex) {
@@ -453,14 +557,18 @@ public class DashboardController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     // get on select customer data.
-    public void getOnSelectCustomerData () {
+
+    /**
+     *
+     */
+    public void getOnSelectCustomerData() {
         // clear customer data.
         customerTableView.getItems().clear();
-        
+
         // Onload customer data on table view.
         CustomerModel customerModel = new CustomerModel();
         try {
@@ -477,7 +585,7 @@ public class DashboardController implements Initializable {
             Logger.getLogger(DashboardController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 
     /*
      * Save Product Functionality.
@@ -577,27 +685,34 @@ public class DashboardController implements Initializable {
         } else {
             //ProductIdTextField.validate();
         }
-        //System.out.println(productInformation.size());
+        
+        if ( productType.getValue() != null){
+            productInformation.add(productType.getValue().toString());
+        } else {
+            validationDialog.ShowDialog("", 16, "");
+        }
+        
+        
 
-        if (productInformation.size() == 6) {
+        if (productInformation.size() == 7) {
             // Dashboard Model Object.
             DashboardModel dashboardModel = new DashboardModel();
             // insertProductFunctionality Function call.
             ResultSet insertProductFunctionality = dashboardModel.insertProductFunctionality(productInformation);
             // Product Object.
-            ProductTable productObject = new ProductTable(insertProductFunctionality.getInt("id"), insertProductFunctionality.getInt("productpacking"), (float) insertProductFunctionality.getDouble("tradeprice"), insertProductFunctionality.getString("productname"), insertProductFunctionality.getString("brandname"), (float) insertProductFunctionality.getDouble("purchaseprice"), insertProductFunctionality.getString("suppliername"), insertProductFunctionality.getString("modifieddate"));
+            ProductTable productObject = new ProductTable(insertProductFunctionality.getInt("id"), insertProductFunctionality.getInt("productpacking"), (float) insertProductFunctionality.getDouble("tradeprice"), insertProductFunctionality.getString("productname"), insertProductFunctionality.getString("brandname"), (float) insertProductFunctionality.getDouble("purchaseprice"), insertProductFunctionality.getString("suppliername"), insertProductFunctionality.getString("productype") , insertProductFunctionality.getString("modifieddate"));
             // Product Add Table.
             productData.add(productObject);
             // Reset Product Text Field.
             ResetProductTextField();
-        } else if ( productInformation.size() == 7 ) {
+        } else if (productInformation.size() == 8) {
             //System.out.println("controllers.DashboardController.saveProductFunction() else");
             // Dashboard Model Object.
             DashboardModel dashboardModel = new DashboardModel();
             // updateProductFunctionality Function call.
             ResultSet updateProductFunctionality = dashboardModel.updateProductFunctionality(productInformation);
             // Product Object.
-            ProductTable productObject = new ProductTable(updateProductFunctionality.getInt("id"), updateProductFunctionality.getInt("productpacking"), (float) updateProductFunctionality.getDouble("tradeprice"), updateProductFunctionality.getString("productname"), updateProductFunctionality.getString("brandname"), (float) updateProductFunctionality.getDouble("purchaseprice"), updateProductFunctionality.getString("suppliername"), updateProductFunctionality.getString("modifieddate"));
+            ProductTable productObject = new ProductTable(updateProductFunctionality.getInt("id"), updateProductFunctionality.getInt("productpacking"), (float) updateProductFunctionality.getDouble("tradeprice"), updateProductFunctionality.getString("productname"), updateProductFunctionality.getString("brandname"), (float) updateProductFunctionality.getDouble("purchaseprice"), updateProductFunctionality.getString("suppliername"), updateProductFunctionality.getString("productype") , updateProductFunctionality.getString("modifieddate"));
             // Product Add Table.
             productData.add(productObject);
             // Reset Product Text Field.
@@ -640,12 +755,23 @@ public class DashboardController implements Initializable {
     // product name cumbo box function.
     @FXML
     private void productCumboBoxFunction() throws SQLException, ClassNotFoundException {
-        StockModel stockModelObject = new StockModel();
-        int productStockQuanlity = 0;
+        //StockModel stockModelObject = new StockModel();
+        //System.out.println( productSelectedId  +" " + productNameComboBox.getSelectionModel().getSelectedIndex() );
+        //int productStockQuanlity = 0;
         // get stock by product id function call;
-        productStockQuanlity = stockModelObject.getStockByProductId(productSelectedId.get(productNameComboBox.getSelectionModel().getSelectedIndex()));
-        currentStockTextField.setText(Integer.toString(productStockQuanlity));
+        OrderModel orderModel = new OrderModel();
+        ResultSet productStockQuanlity = orderModel.getProductStockById(productSelectedId.get(productNameComboBox.getSelectionModel().getSelectedIndex()));
+        //stockModelObject.getStockByProductId(productSelectedId.get(productNameComboBox.getSelectionModel().getSelectedIndex()));
 
+        if (productStockQuanlity.next()) {
+            if (productStockQuanlity.getString("productStock") == null) {
+                currentStockTextField.setText("0");
+            } else if (Integer.parseInt(productStockQuanlity.getString("productStock")) > 0) {
+                currentStockTextField.setText(productStockQuanlity.getString("productStock"));
+            } else if (Integer.parseInt(productStockQuanlity.getString("productStock")) < 0) {
+                currentStockTextField.setText(productStockQuanlity.getString("productStock"));
+            }
+        }
     }
 
     @FXML
@@ -654,21 +780,29 @@ public class DashboardController implements Initializable {
         ArrayList<String> stockInformation = new ArrayList<>();
         // Product Name Validator.
         RequiredFieldValidator addStockValidator = new RequiredFieldValidator();
+        
+        // Product Name Validator.
+        RequiredFieldValidator batchNoValidator = new RequiredFieldValidator();
+        
         //Add Stock Is validation.
         addStockValidator.setMessage("Add Stock Cannot Be Empty.");
         addStockTextField.getValidators().add(addStockValidator);
 
+        //Add Stock Is validation.
+        batchNoValidator.setMessage("Add Stock Cannot Be Empty.");
+        batchNoTextField.getValidators().add(batchNoValidator);
+        
         // if product name is null.
         if (productNameComboBox.getValue() == null) {
 
         } else {
             stockInformation.add(productNameComboBox.getValue());
         }
-        
-        if ( productNameComboBox.getSelectionModel().getSelectedIndex() != -1 ) {
+
+        if (productNameComboBox.getSelectionModel().getSelectedIndex() != -1) {
             stockInformation.add(productSelectedId.get(productNameComboBox.getSelectionModel().getSelectedIndex()));
-        }    
-        
+        }
+
         // if add stock button 
         if (!addStockTextField.getText().isEmpty() && this.validationInteger(addStockTextField.getText())) {
             stockInformation.add(addStockTextField.getText());
@@ -677,26 +811,35 @@ public class DashboardController implements Initializable {
         }
         
         stockInformation.add("Stock Added");
-        if (stockInformation.size() == 4) {
+        
+        if (!batchNoTextField.getText().isEmpty()) {
+            stockInformation.add(batchNoTextField.getText());
+        } 
+        
+        if ( expiredDateDatePicker.getValue().toString() != null ) {
+            stockInformation.add(expiredDateDatePicker.getValue().toString());
+        }
+        
+        if (stockInformation.size() == 6) {
             //System.out.println(stockInformation);
             StockModel stockModel = new StockModel();
             ResultSet resultSet = stockModel.insertStockData(stockInformation);
-            StockTable stockTable = new StockTable(resultSet.getInt("id"), resultSet.getString("productname"), resultSet.getInt("stockquanlity"), resultSet.getString("modifieddate"), resultSet.getString("createddate"), resultSet.getString("stockfunction"));
+            StockTable stockTable = new StockTable(resultSet.getInt("id"), resultSet.getString("productname"), resultSet.getInt("stockquanlity"), resultSet.getString("modifieddate"), resultSet.getString("createddate"), resultSet.getString("stockfunction"), resultSet.getString("expireddate"), resultSet.getString("batchno"));
             stockData.add(stockTable);
         }
 
     }
 
     @FXML
-    private void deleteStockFunction( ActionEvent actionEvent ) throws SQLException, ClassNotFoundException {
+    private void deleteStockFunction(ActionEvent actionEvent) throws SQLException, ClassNotFoundException {
         StockTable stockTable = stockTableView.getSelectionModel().getSelectedItem();
         StockModel stockModel = new StockModel();
         boolean isStockDelete = stockModel.deleteStockData(stockTable);
-        if ( isStockDelete == true ) {
+        if (isStockDelete == true) {
             stockData.remove(stockTable);
         }
     }
-    
+
     @FXML
     private void deleteCustomerFunctionality(ActionEvent event) throws SQLException, ClassNotFoundException {
         // Get current table view data.
@@ -787,6 +930,7 @@ public class DashboardController implements Initializable {
         SupplierTextField.setText(productTable.getSupplierName());
         TradePriceTextField.setText(String.valueOf(productTable.getTradePrice()));
         ProductIdTextField.setText(String.valueOf(productTable.getProductCode()));
+        productType.setValue( productTable.getProductTypes() );
     }
 
     // Save Customer Function

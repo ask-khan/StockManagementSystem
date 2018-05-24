@@ -29,7 +29,8 @@ public class StockManagmentSystem extends Application {
         stage.setTitle("Stock Management System");
         stage.getIcons().add( new Image("file:user-icon.png"));
         stage.setResizable(false);
-        Scene scene = new Scene(root, 400, 300);
+        //Scene scene = new Scene(root, 400, 300);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);
         stage.show();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="167.0" prefWidth="385.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PrintSettingController">
+    <stylesheets>
+        <URL value="@/styles/printsetting.css" />
+    </stylesheets>
+   <children>
+      <JFXComboBox fx:id="printerComboBox" layoutX="15.0" layoutY="42.0" prefHeight="25.0" prefWidth="356.0" promptText="Select Printer" />
+      <Button fx:id="savePrinterButton" layoutX="242.0" layoutY="98.0" mnemonicParsing="false" onAction="#printButtonFunctionality" prefHeight="25.0" prefWidth="116.0" text="Save Printer" />
+   </children>
+</AnchorPane>

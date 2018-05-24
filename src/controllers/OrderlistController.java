@@ -54,6 +54,10 @@ public class OrderlistController implements Initializable {
     // Declare table columns amount.
     @FXML
     private TableColumn<OrderList, String> orderAmount;
+    
+    @FXML
+    private TableColumn<OrderList, String> receivedAmount;
+    
     //Declare table order date.
     @FXML
     private TableColumn<OrderList, String> orderDate;
@@ -92,7 +96,7 @@ public class OrderlistController implements Initializable {
             
             while ( resultSet.next() ) {
                 // Adding in invoice table.
-                OrderList orderListObject = new OrderList(resultSet.getInt("id"),  resultSet.getString("customername"), resultSet.getString("datepicker"), resultSet.getString("totalamount"), resultSet.getString("area"));
+                OrderList orderListObject = new OrderList(resultSet.getInt("id"),  resultSet.getString("customername"), resultSet.getString("datepicker"), resultSet.getString("totalamount"), resultSet.getString("area"), resultSet.getString("receivedamount"));
                 orderListData.add(orderListObject);
             }
         } catch (ClassNotFoundException | SQLException ex) {
@@ -104,6 +108,8 @@ public class OrderlistController implements Initializable {
         orderName.setCellValueFactory(new PropertyValueFactory<OrderList, String>("orderName"));
         orderAmount.setCellValueFactory(new PropertyValueFactory<OrderList, String>("orderAmount"));
         orderDate.setCellValueFactory(new PropertyValueFactory<OrderList, String>("orderDate"));
+        receivedAmount.setCellValueFactory(new PropertyValueFactory<OrderList, String>("receivedAmount"));
+        
         
         orderListTableView.setItems(orderListData);
         
@@ -121,7 +127,7 @@ public class OrderlistController implements Initializable {
 
                 // Compare first name and last name of every person with filter text.
                 String lowerCaseFilter = newValue.toLowerCase();
-                System.out.println( lowerCaseFilter );
+                //System.out.println( lowerCaseFilter );
                 
                 if (String.valueOf(OrderList.getOrderId()).contains(lowerCaseFilter)) {
                     System.out.println(String.valueOf(OrderList.getOrderId()).contains(lowerCaseFilter));

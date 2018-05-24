@@ -6,6 +6,7 @@
 package controllers;
 
 import com.itextpdf.text.DocumentException;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.validation.RequiredFieldValidator;
@@ -15,6 +16,7 @@ import handler.OrderList;
 import handler.ProductTable;
 import handler.ValidationDialog;
 import handler.customerTable;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -44,6 +46,7 @@ import models.CustomerModel;
 import models.DashboardModel;
 import models.OrderListModel;
 import models.OrderModel;
+import org.controlsfx.control.textfield.TextFields;
 
 /**
  * FXML Controller class
@@ -51,62 +54,76 @@ import models.OrderModel;
  * @author Ahmed
  */
 public class OrderController implements Initializable {
-    
-    // Declare Customer Name, Area Text, Quanlity, Product Packing, Trade Price.
 
+    // Declare Customer Name, Area Text, Quanlity, Product Packing, Trade Price.
     /**
      *
      */
     @FXML
     public JFXTextField areaTextField, stockTextField,
+            /**
+             *
+             */
+            quanlityTextField,
+            /**
+             *
+             */
+            productPackingTextField,
+            /**
+             *
+             */
+            tradePriceTextField,
+            productdiscountTextField, customerIdTextField, expiredDate;
+
+    // Declare order Print
 
     /**
      *
      */
-    quanlityTextField,
+    @FXML
+    public JFXCheckBox orderPrint,
 
     /**
      *
      */
-    productPackingTextField,
-
-    /**
-     *
-     */
-    tradePriceTextField;
-    
+    orderWarranty;
     // Declare Date Picker.
     @FXML
     private DatePicker datePicker;
-    
+
+    private String selectedProductId;
+
     // Declare Product Line.
     @FXML
-    private JFXComboBox<String> productLineComboBox = new JFXComboBox<String>();
+    private TextField productListTextfield;
     // Declare Product Line.
     @FXML
-    private JFXComboBox<String> customerNameTextField = new JFXComboBox<String>();
-    
+    private TextField customerNameTextField;
+
+    @FXML
+    private JFXComboBox<String> batchNo = new JFXComboBox<String>();
+
     @FXML
     private Button GenerateInvoiceButton;
-    
+
     // Declare Add Product.
     @FXML
     private Button AddProductButton;
-    
+
     // Declare Total Amount.
     @FXML
-    private TextField totalAmountTextField, invoiceId;
-    
+    private TextField totalAmountTextField, invoiceId, receivedAmountTextField;
+
     @FXML
     private Button deleteProductButton;
-    
+
     // Declare Invoice Product Table.
     @FXML
     private TableView<InvoiceProduct> invoiceProductTable = new TableView<InvoiceProduct>();
-    
+
     // Declare Product Name, Product Packing, Product Trade Price, Product Quanlity. Product Amount.
     @FXML
-    private TableColumn<InvoiceProduct, String> productName;
+    private TableColumn<InvoiceProduct, String> productName, productExpiredDate, productBatchNo;
     @FXML
     private TableColumn<InvoiceProduct, Integer> productPacking, productId;
     @FXML
@@ -115,50 +132,51 @@ public class OrderController implements Initializable {
     private TableColumn<InvoiceProduct, Integer> productQuanlity;
     @FXML
     private TableColumn<InvoiceProduct, Float> productAmount;
-    
+    @FXML
+    private TableColumn<InvoiceProduct, Double> productDiscount;
+
     // Declare arraylist productPriceList.
 
     /**
      *
      */
     public ArrayList<String> productPriceList = new ArrayList<String>();
-    
+
     // Declare arraylist productPackingList.
 
     /**
      *
      */
     public ArrayList<String> productPackingList = new ArrayList<String>();
-    
+
     // Declare arraylist productSelectedId
 
     /**
      *
      */
     public ArrayList<String> productSelectedId = new ArrayList<String>();
-    
+
     // Declare arraylist customer contact.
 
     /**
      *
      */
     public ArrayList<String> customerContact = new ArrayList<String>();
-    
+
     // Declare arraylist customer area.
 
     /**
      *
      */
     public ArrayList<String> customerArea = new ArrayList<String>();
-    
+
     // Declare Observabilelist.
     @FXML
     private final ObservableList<InvoiceProduct> productInvoiceData = FXCollections.observableArrayList();
 
-    
-    
     /**
      * Initializes the controller class.
+     *
      * @param url
      * @param rb
      */
@@ -167,14 +185,25 @@ public class OrderController implements Initializable {
         // Declare Date Object and set to right now date.
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate now = LocalDate.now();
-        
+        customerIdTextField.setVisible(false);
+        // Set Product Discount 
+        productdiscountTextField.setText("0");
+
+        // Set Received.
+        receivedAmountTextField.setText("0");
+
         // Total Amount.
         totalAmountTextField.setText("0.0");
-        
+
         // Set Current Date on Date Picker.
         datePicker.setValue(now);
-        
+
+        // Set totalamount to Disable
         totalAmountTextField.setDisable(true);
+
+        // Hide Expired date and product packing
+        expiredDate.setVisible(false);
+        productPackingTextField.setVisible(false);
 
         // Onload Delete Button Hide Functionality.
         deleteProductButton.disableProperty().bind(Bindings.isEmpty(invoiceProductTable.getSelectionModel().getSelectedItems()));
@@ -182,195 +211,254 @@ public class OrderController implements Initializable {
             // Onload customer data on table view.
             CustomerModel customerModel = new CustomerModel();
             ResultSet customerResult = customerModel.getAllCustomerOnLoad();
-            ObservableList<String> customerList = FXCollections.observableArrayList();
+            //ObservableList<String> customerList = FXCollections.observableArrayList();
+            ArrayList<String> customerList = new ArrayList<>();
             while (customerResult.next()) {
                 // Declare customer table object.
-                customerTable customerTableObject = new customerTable( customerResult.getInt("id"), customerResult.getString("customercontact"), customerResult.getString("customername"), customerResult.getString("customeraddress"), customerResult.getString("customeremailaddress"), customerResult.getString("customerarea")  );
-                customerList.add( customerTableObject.getCustomerNameTableColumns() );
-                customerContact.add( customerTableObject.getCustomerContactTableColumns() );
-                customerArea.add( customerTableObject.getCustomerAreaTableColumns() );
+                customerTable customerTableObject = new customerTable(customerResult.getInt("id"), customerResult.getString("customercontact"), customerResult.getString("customername"), customerResult.getString("customeraddress"), customerResult.getString("customeremailaddress"), customerResult.getString("customerarea"));
+                customerList.add(customerTableObject.getCustomerIdTableColumns() + ": " + customerTableObject.getCustomerNameTableColumns());
+                customerContact.add(customerTableObject.getCustomerContactTableColumns());
+                customerArea.add(customerTableObject.getCustomerAreaTableColumns());
             }
-            
-            customerNameTextField.setItems(customerList);
-            
+            TextFields.bindAutoCompletion(customerNameTextField, customerList);
+            //customerNameTextField.setItems(customerList);
+
             DashboardModel dashboardModel = new DashboardModel();
             ResultSet resultSet = dashboardModel.getAllProductOnLoad();
             ObservableList<String> productList = FXCollections.observableArrayList();
-            
-            while ( resultSet.next() ){
-                ProductTable productObject = new ProductTable( resultSet.getInt("id"), resultSet.getInt("productpacking"),(float) resultSet.getDouble("tradeprice") , resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("modifieddate"));
-                productList.add(productObject.getProductName());
-                productPriceList.add( String.valueOf( productObject.getPurchasedPrice()) );
-                productPackingList.add( String.valueOf( productObject.getProductPacking()) );
-                productSelectedId.add( String.valueOf( productObject.getProductCode()) );
+
+            while (resultSet.next()) {
+                ProductTable productObject = new ProductTable(resultSet.getInt("id"), resultSet.getInt("productpacking"), (float) resultSet.getDouble("tradeprice"), resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("producttype"), resultSet.getString("modifieddate"));
+                productList.add(productObject.getProductCode() + ":" + productObject.getProductName());
             }
-            
-            productLineComboBox.setItems(productList);
-            
+            TextFields.bindAutoCompletion(productListTextfield, productList);
+            //productLineComboBox.setItems(productList);
+
             // Set Values for table
-            
             productTradePrice.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Float>("productTradePrice"));
             productName.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, String>("productName"));
             productPacking.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productPacking"));
             productAmount.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Float>("productAmount"));
             productQuanlity.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productQuanlity"));
             productId.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productId"));
-            
+            productDiscount.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Double>("productDiscount"));
+            productBatchNo.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, String>("productBatchNo"));
+            productExpiredDate.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, String>("productExpiredDate"));
+
             invoiceProductTable.setItems(productInvoiceData);
         } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(OrderController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         //productLineComboBox.getSelectionModel().selectedIndexProperty().addListener(listener);
-        
-        
-    }    
-    
+    }
+
     // Add Product Invoice Function.
     @FXML
     private void addProductInvoiceFunction(ActionEvent event) {
-        ArrayList<String>  productInvoiceList = new ArrayList<String>();
-        
+        ArrayList<String> productInvoiceList = new ArrayList<String>();
+
         // Product Packing Validator.
-        RequiredFieldValidator productPackingValidator = new RequiredFieldValidator(); 
+        RequiredFieldValidator productPackingValidator = new RequiredFieldValidator();
         // Product Trade Price Validator.
-        RequiredFieldValidator tradePriceValidator = new RequiredFieldValidator(); 
+        RequiredFieldValidator tradePriceValidator = new RequiredFieldValidator();
         // Quanlity Validator.
-        RequiredFieldValidator productQuanlityValidator = new RequiredFieldValidator(); 
+        RequiredFieldValidator productQuanlityValidator = new RequiredFieldValidator();
         // Product Name Validator.
         RequiredFieldValidator productNameValidator = new RequiredFieldValidator();
-       
-        
+
         // Product Packing Message.
         productPackingValidator.setMessage("Product packing cannot be empty.");
         productPackingTextField.getValidators().add(productPackingValidator);
-        
+
         // Product Quanlity Message.
         productQuanlityValidator.setMessage("Product quanlity cannot be empty");
         quanlityTextField.getValidators().add(productQuanlityValidator);
-        
+
         tradePriceValidator.setMessage("Trade price cannot be empty.");
         tradePriceTextField.getValidators().add(tradePriceValidator);
-        
+
         // Product Packing Validation.
-        if ( !productPackingTextField.getText().isEmpty() && this.validationInteger(productPackingTextField.getText()) ) {
-        
-            productInvoiceList.add( productPackingTextField.getText()  );
-        
+        if (!productPackingTextField.getText().isEmpty() && this.validationInteger(productPackingTextField.getText())) {
+            productInvoiceList.add(productPackingTextField.getText());
         } else {
             productPackingTextField.validate();
         }
-        
+
         // Product Quanlity Validation.
-        if ( !quanlityTextField.getText().isEmpty() && this.validationInteger( quanlityTextField.getText() ) ) {
-            productInvoiceList.add( quanlityTextField.getText()  );
+        if (!quanlityTextField.getText().isEmpty() && this.validationInteger(quanlityTextField.getText())) {
+            productInvoiceList.add(quanlityTextField.getText());
         } else {
             quanlityTextField.validate();
         }
-        
+
         // Trade Price Validation.
-        if ( !tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText()) ) {
-            productInvoiceList.add( tradePriceTextField.getText()  );
+        if (!tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText())) {
+            productInvoiceList.add(tradePriceTextField.getText());
         } else {
             tradePriceTextField.validate();
         }
-        
+
         // Product Line Combo box Validation.
-        if ( productLineComboBox.getSelectionModel().getSelectedIndex() != -1 ) {
-            productInvoiceList.add( productLineComboBox.getSelectionModel().getSelectedItem()  );
+        if (!productListTextfield.getText().isEmpty()) {
+            productInvoiceList.add(productListTextfield.getText());
         } else {
             //productLineComboBox.validate();
         }
-        
+
         // Quanlity Validation.
-        if (  !quanlityTextField.getText().isEmpty() && this.validationInteger( quanlityTextField.getText() ) && !tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText()) ) {
-           productInvoiceList.add( String.valueOf(Float.parseFloat(tradePriceTextField.getText()) * Integer.parseInt( quanlityTextField.getText()   ))  ); 
+        if (!quanlityTextField.getText().isEmpty() && this.validationInteger(quanlityTextField.getText()) && !tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText())) {
+            double discount = (double) Double.parseDouble(productdiscountTextField.getText()) / 100;
+            double productAmountSelected = (double) ((Float.parseFloat(tradePriceTextField.getText()) * Integer.parseInt(quanlityTextField.getText()) * (double) discount));
+
+            productAmountSelected = Float.parseFloat(tradePriceTextField.getText()) * Integer.parseInt(quanlityTextField.getText()) - productAmountSelected;
+            productInvoiceList.add(String.valueOf(productAmountSelected));
         }
-        
-        
+
+        // Product Discount Validation.
+        if (!productdiscountTextField.getText().isEmpty() && this.validationIntegerOrFloat(productdiscountTextField.getText())) {
+            productInvoiceList.add(String.valueOf(Double.parseDouble(productdiscountTextField.getText())));
+        }
+
+        // Product Batch No Validation.
+        if (!batchNo.getValue().isEmpty()) {
+            productInvoiceList.add(batchNo.getValue());
+        }
+
+        if (!expiredDate.getText().isEmpty()) {
+            productInvoiceList.add(expiredDate.getText());
+        }
+
+        //System.out.println(productInvoiceList);
         // if product voice list is valid.
-        if ( productInvoiceList.size() == 5 ) {
-            //System.out.println(productSelectedId + " " + productLineComboBox.getSelectionModel().getSelectedIndex() );
-            if ( Integer.parseInt( stockTextField.getText() ) > Integer.parseInt( quanlityTextField.getText() ) ) {
-                InvoiceProduct invoiceProduct = new InvoiceProduct( productInvoiceList.get(3), Integer.valueOf( productInvoiceList.get(0)), Integer.valueOf( productInvoiceList.get(1)), Float.valueOf( productInvoiceList.get(2)), Float.valueOf( productInvoiceList.get(4)), Integer.valueOf( productSelectedId.get(productLineComboBox.getSelectionModel().getSelectedIndex()) )  );
-                productInvoiceData.add( invoiceProduct);
-            
-                if ( !totalAmountTextField.getText().isEmpty()) {
-                    float total = Float.valueOf( totalAmountTextField.getText() ) + Float.valueOf( productInvoiceList.get(4));
-                    totalAmountTextField.setText( String.valueOf(total) );
+        if (productInvoiceList.size() == 8) {
+            System.out.println(productInvoiceList );
+            if (Integer.parseInt(stockTextField.getText()) >= Integer.parseInt(quanlityTextField.getText())) {
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productInvoiceList.get(3), Integer.valueOf(productInvoiceList.get(0)), Integer.valueOf(productInvoiceList.get(1)), Float.valueOf(productInvoiceList.get(2)), Float.valueOf(productInvoiceList.get(4)), Integer.valueOf(selectedProductId), Double.valueOf(productInvoiceList.get(5)), productInvoiceList.get(7), productInvoiceList.get(6));
+                productInvoiceData.add(invoiceProduct);
+
+                if (!totalAmountTextField.getText().isEmpty()) {
+                    float total = Float.valueOf(totalAmountTextField.getText()) + Float.valueOf(productInvoiceList.get(4));
+                    totalAmountTextField.setText(String.valueOf(total));
                 } else {
-                    float total = Float.valueOf( productInvoiceList.get(4));
-                    totalAmountTextField.setText( String.valueOf(total) );
+                    float total = Float.valueOf(productInvoiceList.get(4));
+                    totalAmountTextField.setText(String.valueOf(total));
                 }
             } else {
                 ValidationDialog validationDialog = new ValidationDialog();
-                validationDialog.ShowDialog("Stock Error", 9);
+                validationDialog.ShowDialog("Stock Error", 9, "");
             }
-            
+
         } else {
-            
+
         }
     }
-    
+
+    @FXML
+    private void batchNoFunction() throws ClassNotFoundException, SQLException {
+        //System.out.println("controllers.OrderController.batchNoFunction()");
+        //System.out.println( selectedProductId + ":" + batchNo.getValue() );
+        OrderModel orderModel = new OrderModel();
+        ResultSet getStockQuanlity = orderModel.getQuanlityByBatchId(selectedProductId, batchNo.getValue());
+        ResultSet batchDetails = orderModel.getExpiredDateByBatchId(batchNo.getValue());
+        if (getStockQuanlity.next()) {
+            //System.out.println(resultSet.getString("productStock"));
+            if (getStockQuanlity.getString("productStock") == null) {
+                stockTextField.setText("0");
+            } else if (Integer.parseInt(getStockQuanlity.getString("productStock")) > 0) {
+                stockTextField.setText(getStockQuanlity.getString("productStock"));
+            } else if (Integer.parseInt(getStockQuanlity.getString("productStock")) < 0) {
+                stockTextField.setText(getStockQuanlity.getString("productStock"));
+            }
+        }
+
+        if (batchDetails.next()) {
+            expiredDate.setText(batchDetails.getString("expireddate"));
+        }
+    }
+
     // product cumbo onclick function. 
     @FXML
-    private void productListComboBoxFunctionality() throws ClassNotFoundException, SQLException {
-         
-        productPackingTextField.setText( productPackingList.get( productLineComboBox.getSelectionModel().getSelectedIndex()) );
-        tradePriceTextField.setText( productPriceList.get( productLineComboBox.getSelectionModel().getSelectedIndex() ) );
+    private void productListFunctionality() throws ClassNotFoundException, SQLException {
+        // Declare stockQuanlity, stock name.
+        ArrayList<String> stockQuanlity = new ArrayList<String>();
+        ArrayList<String> stockBatchName = new ArrayList<String>();
+
+        //System.out.println( productListTextfield.getText().substring(0,productListTextfield.getText().indexOf(":")) );
+        DashboardModel dashboardModel = new DashboardModel();
+        selectedProductId = productListTextfield.getText().substring(0, productListTextfield.getText().indexOf(":"));
+        ResultSet productDetail = dashboardModel.getProductById(productListTextfield.getText().substring(0, productListTextfield.getText().indexOf(":")));
+
         OrderModel orderModel = new OrderModel();
-        ResultSet resultSet  = orderModel.getProductStockById( productSelectedId.get(productLineComboBox.getSelectionModel().getSelectedIndex()));
-        if ( resultSet.next() ) {
-            
-            if ( resultSet.getString("productStock") == null  ) {
-                stockTextField.setText( "0" );
-            }
-            else if ( Integer.parseInt( resultSet.getString("productStock")) > 0 ) {
-                stockTextField.setText( resultSet.getString("productStock") );
-            } else if ( Integer.parseInt( resultSet.getString("productStock")) < 0 )  {
-                stockTextField.setText( resultSet.getString("productStock") );
+        // System.out.println(productSelectedId.get(productListTextfield.getSelectionModel().getSelectedIndex()));
+        ResultSet resultSet = orderModel.getProductBatchNo(productListTextfield.getText().substring(0, productListTextfield.getText().indexOf(":")));
+
+        while (resultSet.next()) {
+            if (resultSet.getString("batchno") != null) {
+                stockBatchName.add(resultSet.getString("batchno"));
             }
         }
-        
+
+        //System.out.println( stockBatchName );
+        batchNo.getItems().clear();
+        batchNo.getItems().addAll(stockBatchName);
+
+        if (productDetail.next()) {
+            productPackingTextField.setText(Integer.toString(productDetail.getInt("productpacking")));
+            tradePriceTextField.setText(Double.toString(productDetail.getDouble("tradeprice")));
+            productListTextfield.setText(productDetail.getString("productname"));
+        }
+
     }
-    
+
+    @FXML
+    private void onChangeBatchNo() {
+
+    }
+
     // customer cumbo box onclick function.
     @FXML
-    private void customerCumboBoxFunction() {
-        areaTextField.setText( customerArea.get(customerNameTextField.getSelectionModel().getSelectedIndex()) );
+    private void customerCumboBoxFunction() throws ClassNotFoundException, SQLException {
+
+        CustomerModel customerModel = new CustomerModel();
+        customerIdTextField.setText(customerNameTextField.getText().substring(0, customerNameTextField.getText().indexOf(":")));
+        ResultSet customerInfoResultSet = customerModel.getCustomerInfoById(customerNameTextField.getText().substring(0, customerNameTextField.getText().indexOf(":")));
+        System.out.println(customerInfoResultSet);
+        if (customerInfoResultSet.next()) {
+            // set customer name.
+            customerNameTextField.setText(customerInfoResultSet.getString("customername"));
+            // set customer area.
+            areaTextField.setText(customerInfoResultSet.getString("customerarea"));
+        }
+
     }
-    
+
     /*
      * validation - interger
      * @param: text: String
      **/
-
     /**
      *
      * @param text
      * @return
      */
-
-    public boolean validationInteger( String text ){
+    public boolean validationInteger(String text) {
         return text.matches("[0-9]*");
     }
-    
+
     /*
      * validation - interger
      * @param: text: String
      **/
-
     /**
      *
      * @param text
      * @return
      */
-
-    public boolean validationIntegerOrFloat( String text ){
+    public boolean validationIntegerOrFloat(String text) {
         return !text.matches(".*[a-z].*");
     }
-    
-    
+
     /**
      * Add Delete Button
      *
@@ -388,97 +476,114 @@ public class OrderController implements Initializable {
         if (result.get() == ButtonType.OK) {
             //System.out.println("OK");
             InvoiceProduct invoiceProductTableObject = invoiceProductTable.getSelectionModel().getSelectedItem();
-            
-            float totalAmount =  Float.valueOf(totalAmountTextField.getText()) - invoiceProductTableObject.getProductAmount();
+
+            float totalAmount = Float.valueOf(totalAmountTextField.getText()) - invoiceProductTableObject.getProductAmount();
             totalAmountTextField.setText(String.valueOf(totalAmount));
-            
+
             // Remove Product
-            productInvoiceData.remove( invoiceProductTableObject );
-            
+            productInvoiceData.remove(invoiceProductTableObject);
+
         } else {
             //System.out.println("Delete");
         }
     }
-    
+
     // GenerateInvoiceButtonFunction
     @FXML
-    private void GenerateInvoiceButtonFunction() throws SQLException, ClassNotFoundException, IOException, DocumentException {
-        ArrayList<String>  customerInvoiceData = new ArrayList<String>();
-        
+    private void GenerateInvoiceButtonFunction() throws SQLException, ClassNotFoundException, IOException, DocumentException, PrinterException {
+        ArrayList<String> customerInvoiceData = new ArrayList<String>();
+
         // Product customer Name Validator.
-        RequiredFieldValidator customerNameValidator = new RequiredFieldValidator(); 
+        RequiredFieldValidator customerNameValidator = new RequiredFieldValidator();
         // Product customer Name Validator.
         RequiredFieldValidator areaValidator = new RequiredFieldValidator();
         // Date Picker Validator.
         RequiredFieldValidator datePickerValidator = new RequiredFieldValidator();
-        
+
         // Area Validator.
         areaValidator.setMessage("Area cannot be empty.");
         areaTextField.getValidators().add(areaValidator);
-        System.out.println(customerNameTextField.getValue());
+        System.out.println(customerNameTextField.getText());
         // Customer Name is validator
-        if ( customerNameTextField.getValue() != null && !this.validationIntegerOrFloat(customerNameTextField.getValue())  ) {
-            customerInvoiceData.add( customerNameTextField.getValue() );
-        } else if ( customerNameTextField.getValue() == null ) {
+        if (!customerNameTextField.getText().isEmpty() && !this.validationIntegerOrFloat(customerNameTextField.getText())) {
+            customerInvoiceData.add(customerNameTextField.getText());
+        } else if (customerNameTextField.getText() == null) {
             //customerNameTextField.validate();
-            
-            
+
         }
-        
+
         // Area is validator.
-        if ( !areaTextField.getText().isEmpty() && !this.validationIntegerOrFloat(areaTextField.getText())  ) {
-            customerInvoiceData.add( areaTextField.getText() );
+        if (!areaTextField.getText().isEmpty() && !this.validationIntegerOrFloat(areaTextField.getText())) {
+            customerInvoiceData.add(areaTextField.getText());
         } else {
             areaTextField.validate();
         }
-        
+
         // DatePicker Validator.
-        if ( !datePicker.getValue().toString().isEmpty() ){
-            customerInvoiceData.add( datePicker.getValue().toString() );
+        if (!datePicker.getValue().toString().isEmpty()) {
+            customerInvoiceData.add(datePicker.getValue().toString());
         } else {
-            
+
         }
         // Total Amount Validator.
-        if ( !totalAmountTextField.getText().isEmpty() ) {
-            customerInvoiceData.add( totalAmountTextField.getText());
+        if (!totalAmountTextField.getText().isEmpty()) {
+            customerInvoiceData.add(totalAmountTextField.getText());
         }
-        
+
         // invoice validator
-        if ( !invoiceId.getText().isEmpty() ) {
-            customerInvoiceData.add( invoiceId.getText());
+        if (!invoiceId.getText().isEmpty()) {
+            customerInvoiceData.add(invoiceId.getText());
         }
-        if ( invoiceProductTable.getItems().size() > 0 ) {
-            
-        if ( customerInvoiceData.size() == 4) {
-            OrderModel orderModelObject = new OrderModel();
-            ResultSet resultSet =  orderModelObject.insertInvoiceData(customerInvoiceData);        
-            this.insertInvoiceProductTable( resultSet.getInt("id") , true );
-            GeneratePDF generatePDF = new GeneratePDF();
-            String path =  generatePDF.generatePDFInvoice( String.valueOf(resultSet.getInt("id")));
-            // if path is not empty.
-            if ( !path.isEmpty() ){
-                ValidationDialog validationDialog = new ValidationDialog();
-                validationDialog.ShowDialog("Good News", 8);
+
+        if (!receivedAmountTextField.getText().isEmpty() && validationIntegerOrFloat(receivedAmountTextField.getText())) {
+            customerInvoiceData.add(receivedAmountTextField.getText());
+        }
+
+        if (!customerIdTextField.getText().isEmpty() && validationIntegerOrFloat(customerIdTextField.getText())) {
+            customerInvoiceData.add(customerIdTextField.getText());
+        }
+
+        customerInvoiceData.add(String.valueOf(orderWarranty.isSelected()));
+        //System.out.println( customerInvoiceData.size() );
+        if (invoiceProductTable.getItems().size() > 0) {
+
+            if (customerInvoiceData.size() == 7) {
+                OrderModel orderModelObject = new OrderModel();
+                ResultSet resultSet = orderModelObject.insertInvoiceData(customerInvoiceData);
+                this.insertInvoiceProductTable(resultSet.getInt("id"), true);
+                GeneratePDF generatePDF = new GeneratePDF();
+                String path = generatePDF.generatePDFInvoice(String.valueOf(resultSet.getInt("id")));
+                if (orderPrint.isSelected()) {
+                    generatePDF.PrintPDF(path);
+                }
+
+                // if path is not empty.
+                if (!path.isEmpty()) {
+                    ValidationDialog validationDialog = new ValidationDialog();
+                    validationDialog.ShowDialog("Good News", 8, path);
+                }
+            } else if (customerInvoiceData.size() == 8) {
+                OrderModel orderModelObject = new OrderModel();
+                ResultSet resultSet = orderModelObject.updateInvoiceData(customerInvoiceData);
+                this.insertInvoiceProductTable(resultSet.getInt("id"), false);
+                GeneratePDF generatePDF = new GeneratePDF();
+                String path = generatePDF.generatePDFInvoice(String.valueOf(resultSet.getInt("id")));
+                if (orderPrint.isSelected()) {
+                    generatePDF.PrintPDF(path);
+                }
+                // if path is not empty.
+                if (!path.isEmpty()) {
+                    ValidationDialog validationDialog = new ValidationDialog();
+                    validationDialog.ShowDialog("Good News", 8, path);
+                }
             }
-        } else if ( customerInvoiceData.size() == 5 )  {
-            OrderModel orderModelObject = new OrderModel();
-            ResultSet resultSet = orderModelObject.updateInvoiceData(customerInvoiceData);
-            this.insertInvoiceProductTable( resultSet.getInt("id") , false );
-            GeneratePDF generatePDF = new GeneratePDF();
-            String path =  generatePDF.generatePDFInvoice( String.valueOf(resultSet.getInt("id")));
-            // if path is not empty.
-            if ( !path.isEmpty() ){
-                ValidationDialog validationDialog = new ValidationDialog();
-                validationDialog.ShowDialog("Good News", 8);
-            } 
-        }
         } else {
             ValidationDialog validationDialog = new ValidationDialog();
-            validationDialog.ShowDialog("", 2);
+            validationDialog.ShowDialog("", 2, "");
         }
-        
+
     }
-    
+
     /**
      *
      * @param invoiceId
@@ -486,35 +591,42 @@ public class OrderController implements Initializable {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void  insertInvoiceProductTable( int invoiceId, boolean checkInsert ) throws SQLException, ClassNotFoundException {
-        
+    public void insertInvoiceProductTable(int invoiceId, boolean checkInsert) throws SQLException, ClassNotFoundException {
+
         // Declare Invoice Product Table Size.
         int InvoiceProductTableSize = invoiceProductTable.getItems().size();
-        
+        // Declare Order Model Object.
+        OrderModel orderModel = new OrderModel();
+
+        if (checkInsert != true) {
+            orderModel.deleteInvoiceProductList(Integer.toString(invoiceId));
+        }
+
         // If InvoiceProductTableSize is greater than zero.
-        if ( InvoiceProductTableSize > 0 ) {
+        if (InvoiceProductTableSize > 0) {
             // For loops.
             for (int i = 0; i < InvoiceProductTableSize; i++) {
                 // Declare ArrayList productInvoiceList.
-                ArrayList<String>  productInvoiceList = new ArrayList<String>();
+                ArrayList<String> productInvoiceList = new ArrayList<String>();
                 // Declare InvoiceProductTable Object.
                 InvoiceProduct invoiceProductObject = invoiceProductTable.getItems().get(i);
-                productInvoiceList.add( String.valueOf(invoiceProductObject.getProductId()) );
-                productInvoiceList.add( String.valueOf(invoiceProductObject.getProductTradePrice()));
-                productInvoiceList.add( String.valueOf(invoiceProductObject.getProductQuanlity()));
-                productInvoiceList.add( String.valueOf(invoiceProductObject.getProductAmount()));
-                productInvoiceList.add( String.valueOf( invoiceId ) );    
-                
-                // Declare Order Model Object.
-                OrderModel orderModel = new OrderModel();
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductId()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductTradePrice()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductQuanlity()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductAmount()));
+                productInvoiceList.add(String.valueOf(invoiceId));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductDiscount()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductExpiredDate()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductBatchNo()));
+
                 // Order Insert Invoice Product List Function Call.
-                if ( checkInsert == true ) {
+                if (checkInsert == true) {
                     orderModel.insertInvoiceProductList(productInvoiceList, Integer.toString(invoiceId));
                 } else {
                     orderModel.updateInvoiceProductList(productInvoiceList, Integer.toString(invoiceId));
                 }
-                
             }
+            orderModel.updateInvoiceProfitAmount(invoiceId);
         }
     }
 
@@ -524,35 +636,95 @@ public class OrderController implements Initializable {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void setInvoiceDataInView( OrderList orderListObject) throws SQLException, ClassNotFoundException {
-    
+    public void setInvoiceDataInView(OrderList orderListObject) throws SQLException, ClassNotFoundException {
+        OrderListModel orderListModel = new OrderListModel();
+        // get customer info by order id.
+        ResultSet orderListSet = orderListModel.getCustomerId(String.valueOf(orderListObject.getOrderId()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
         String productName = "";
         int productPacking = 0;
         LocalDate localDate = LocalDate.parse(orderListObject.getOrderDate(), formatter);
         // set text field.
-        this.invoiceId.setText( String.valueOf(orderListObject.getOrderId()) );
-        this.customerNameTextField.setValue( orderListObject.getOrderName() );
-        this.areaTextField.setText( orderListObject.getOrderArea() );
-        this.datePicker.setValue( localDate );
-        this.totalAmountTextField.setText( orderListObject.getOrderAmount() );
+        this.invoiceId.setText(String.valueOf(orderListObject.getOrderId()));
+        this.customerNameTextField.setText(orderListObject.getOrderName());
+        this.areaTextField.setText(orderListObject.getOrderArea());
+        this.datePicker.setValue(localDate);
+        this.totalAmountTextField.setText(orderListObject.getOrderAmount());
+        this.receivedAmountTextField.setText(orderListObject.getReceivedAmount());
+
+        if (orderListSet.next()) {
+            this.customerIdTextField.setText(String.valueOf(orderListSet.getInt("customerid")));
+        }
+
+        this.orderWarranty.setSelected(orderListSet.getBoolean("warranty"));
         OrderListModel listModel = new OrderListModel();
         // get all invoice product by id function call.
-        ResultSet resultSet = listModel.getAllInvoiceProductById(orderListObject);
+        ResultSet resultSet = listModel.getAllInvoiceProductById(orderListObject.getOrderId());
         // while loops
         while (resultSet.next()) {
             // function call get product detail by id.
-            ResultSet productDetail = listModel.getProductById( resultSet.getString("productid"));
+            ResultSet productDetail = listModel.getProductById(resultSet.getString("productid"));
             // if product detail have next.
-            if ( productDetail.next()) {
+            if (productDetail.next()) {
                 // get trade price float.
                 float tradePrice = (float) resultSet.getDouble("tradeprice");
                 // invoice product object.
-                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")));
+                //System.out.println(resultSet.getString("productid") + resultSet.getString("productdiscount"));
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")),  Double.parseDouble(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"));
                 // add object in table.
                 productInvoiceData.add(invoiceProduct);
             }
         }
     }
-    
+
+    /**
+     *
+     * @param invoiceId
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void setInvoiceDataInCustomerView(String invoiceId) throws SQLException, ClassNotFoundException {
+        OrderListModel orderListModel = new OrderListModel();
+        // get customer info by order id.
+        ResultSet orderListSet = orderListModel.getCustomerId(invoiceId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
+        
+        if (orderListSet.next()) {
+            
+            LocalDate localDate = LocalDate.parse(orderListSet.getString("datepicker"), formatter);
+            this.invoiceId.setText(invoiceId);
+            this.customerNameTextField.setText(orderListSet.getString("customername"));
+            this.areaTextField.setText(orderListSet.getString("area"));
+            this.datePicker.setValue(localDate);
+            this.totalAmountTextField.setText(String.valueOf(orderListSet.getDouble("totalamount")));
+            this.receivedAmountTextField.setText(String.valueOf(orderListSet.getDouble("receivedamount")));
+            this.customerIdTextField.setText(String.valueOf(orderListSet.getInt("customerid")));
+            this.orderWarranty.setSelected(orderListSet.getBoolean("warranty"));
+        }
+        
+        OrderListModel listModel = new OrderListModel();
+        // get all invoice product by id function call.
+        ResultSet resultSet = listModel.getAllInvoiceProductById(Integer.valueOf((invoiceId)));
+        
+        // while loops
+        while (resultSet.next()) {
+            // function call get product detail by id.
+            ResultSet productDetail = listModel.getProductById(resultSet.getString("productid"));
+            // if product detail have next.
+            if (productDetail.next()) {
+                // get trade price float.
+                float tradePrice = (float) resultSet.getDouble("tradeprice");
+                // invoice product object.
+                //System.out.println(resultSet.getString("productid") + resultSet.getString("productdiscount"));
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")), Integer.valueOf(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"));
+                // add object in table.
+                productInvoiceData.add(invoiceProduct);
+            }
+        }
+        
+    }
+
 }
+
+
+//

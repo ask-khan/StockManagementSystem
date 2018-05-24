@@ -30,7 +30,7 @@ public class LoginModel {
     public boolean loginFunctionality(ArrayList<String> userInformation) throws SQLException, ClassNotFoundException {
 
         boolean checkExist = false;
-
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);

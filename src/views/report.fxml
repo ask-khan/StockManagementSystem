@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReportController">
+    <stylesheets>
+        <URL value="@/styles/report.css" />
+    </stylesheets>
+   <children>
+      <JFXTabPane layoutY="-1.0" prefHeight="400.0" prefWidth="608.0">
+         <tabs>
+            <Tab text="Customer Sale">
+              <content>
+                <AnchorPane prefHeight="400.0" prefWidth="600.0">
+                     <children>
+                        <ComboBox fx:id="customerNameComboBox" layoutX="255.0" layoutY="64.0" prefHeight="25.0" prefWidth="310.0" promptText="Select Customer Name" />
+                        <DatePicker fx:id="startDatePicker" layoutX="51.0" layoutY="126.0" prefHeight="25.0" prefWidth="206.0" promptText="Start Date" />
+                        <DatePicker fx:id="endDatePicker" layoutX="366.0" layoutY="126.0" prefHeight="25.0" prefWidth="199.0" promptText="End Date" />
+                        <JFXButton fx:id="customerSaleButton" layoutX="447.0" layoutY="214.0" onAction="#generateCustomerFunction" prefHeight="25.0" prefWidth="118.0" styleClass="buttonClass" stylesheets="@../styles/report.css" text="Generate Report" textFill="#fcfcfc" />
+                        <Label layoutX="39.0" layoutY="64.0" prefHeight="25.0" prefWidth="168.0" text="Select the customer name:">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Product Sale">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ComboBox fx:id="productNameComboBox" layoutX="252.0" layoutY="69.0" prefHeight="25.0" prefWidth="254.0" promptText="Select Product Name" />
+                        <DatePicker fx:id="productStartDate" layoutX="50.0" layoutY="133.0" prefHeight="25.0" prefWidth="209.0" promptText="Start date" />
+                        <DatePicker fx:id="productEndDate" layoutX="307.0" layoutY="133.0" prefHeight="25.0" prefWidth="199.0" />
+                        <JFXButton fx:id="productSaleButton" layoutX="392.0" layoutY="200.0" onAction="#generateProductFunction" prefHeight="25.0" prefWidth="114.0" styleClass="buttonClass" stylesheets="@../styles/report.css" text="Generate Report" textFill="#fcfafa" />
+                        <Label layoutX="50.0" layoutY="70.0" prefHeight="24.0" prefWidth="190.0" text="Select the product name:">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Sales">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <DatePicker fx:id="salesStartDatePicker" layoutX="49.0" layoutY="60.0" prefHeight="25.0" prefWidth="238.0" promptText="Start date" />
+                        <DatePicker fx:id="saleEndDatePicker" layoutX="317.0" layoutY="60.0" prefHeight="25.0" prefWidth="238.0" promptText="End date" />
+                        <JFXButton fx:id="saleButton" layoutX="433.0" layoutY="147.0" onAction="#generateSalesFunction" prefHeight="25.0" prefWidth="136.0" styleClass="buttonClass" stylesheets="@../styles/report.css" text="Generate Report" textFill="#fcf7f7" />
+                     </children></AnchorPane>
+              </content>
+            </Tab>
+         </tabs></JFXTabPane>
+   </children>
+</AnchorPane>

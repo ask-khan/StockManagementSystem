@@ -28,7 +28,7 @@ public class CustomerModel {
      * @throws java.lang.ClassNotFoundException
      */
     public ResultSet insertCustomerFunctionality(ArrayList<String> customerData) throws SQLException, ClassNotFoundException {
-
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
@@ -60,7 +60,7 @@ public class CustomerModel {
     public boolean deleteCustomer(int customerCode) throws SQLException, ClassNotFoundException {
 
         boolean checkExist = true;
-
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
@@ -84,7 +84,8 @@ public class CustomerModel {
      * @throws java.lang.ClassNotFoundException
      */
     public ResultSet updateCustomerFunctionality(ArrayList<String> customerData) throws ClassNotFoundException, SQLException {
-        System.out.println(customerData);
+        //System.out.println(customerData);
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
@@ -109,13 +110,35 @@ public class CustomerModel {
      */
     public ResultSet getAllCustomerOnLoad() throws ClassNotFoundException, SQLException {
         boolean checkExist = false;
-
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
         Statement statementObject = connection.createStatement();
         // User Login Query 
         String userLoginSql = "SELECT * from customer;";
+        ResultSet resultSet = statementObject.executeQuery(userLoginSql);
+
+        return resultSet;
+    }
+    
+    /**
+     *
+     * @param customerId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public ResultSet getCustomerInfoById( String customerId ) throws ClassNotFoundException,SQLException  {
+        boolean checkExist = false;
+        // Initialize Db Instance.
+        DBUtil dbObject = new DBUtil();
+        Connection connection = dbObject.DbConnection();
+        connection.setAutoCommit(false);
+        Statement statementObject = connection.createStatement();
+        // User Login Query 
+        String userLoginSql = "SELECT * from customer where id=" + customerId + ";" ;
+        //System.out.println(userLoginSql);
         ResultSet resultSet = statementObject.executeQuery(userLoginSql);
 
         return resultSet;

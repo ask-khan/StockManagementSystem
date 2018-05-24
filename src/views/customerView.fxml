@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="694.0" prefWidth="971.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CustomerViewController">
+    <stylesheets>
+        <URL value="@/styles/customerview.css" />
+    </stylesheets>
+   <children>
+      <MenuBar layoutY="-1.0" prefHeight="25.0" prefWidth="971.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <TextField fx:id="customerViewName" layoutX="45.0" layoutY="61.0" onAction="#customerViewNameFunction" prefHeight="31.0" prefWidth="321.0" promptText="Customer Name" />
+      <TextField fx:id="contactCustomerView" layoutX="405.0" layoutY="58.0" prefHeight="31.0" prefWidth="231.0" promptText="Contact" />
+      <TextField fx:id="areaCustomerView" layoutX="676.0" layoutY="58.0" prefHeight="31.0" prefWidth="231.0" promptText="Area" />
+      <TextField fx:id="emailAddressCustomerView" layoutX="45.0" layoutY="135.0" prefHeight="31.0" prefWidth="321.0" promptText="Email Address" />
+      <Button fx:id="viewButton" layoutX="405.0" layoutY="132.0" mnemonicParsing="false" onAction="#viewButtonFunction" prefHeight="31.0" prefWidth="94.0" styleClass="buttonClass" stylesheets="@../styles/customerview.css" text="View" textFill="#fffefe" />
+      <Button fx:id="deleteButton" layoutX="548.0" layoutY="132.0" mnemonicParsing="false" onAction="#deleteButtonFunction" prefHeight="31.0" prefWidth="94.0" styleClass="buttonClass" stylesheets="@../styles/customerview.css" text="Delete" textFill="#f8f7f7" />
+      <TextField fx:id="searchInvoiceNumber" layoutX="45.0" layoutY="199.0" prefHeight="31.0" prefWidth="321.0" promptText="Search invoice number" />
+      <TableView fx:id="customerViewTable" layoutY="247.0" prefHeight="448.0" prefWidth="971.0">
+        <columns>
+          <TableColumn fx:id="invoiceIdColumns" prefWidth="102.0" text="ID" />
+          <TableColumn fx:id="customerIdColumns" prefWidth="177.0" text="Customer ID" />
+            <TableColumn fx:id="productNoColumns" prefWidth="184.0" text="Product No" />
+            <TableColumn fx:id="totalAmountColumns" minWidth="1.0" prefWidth="182.0" text="Total Amount" />
+            <TableColumn fx:id="receivedAmountColumns" prefWidth="170.0" text="Received Amount" />
+            <TableColumn fx:id="createdDateColumns" prefWidth="155.0" text="Created Date" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>

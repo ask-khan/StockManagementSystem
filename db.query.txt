@@ -118,3 +118,41 @@ Select ( Select SUM(stockquanlity)
  Select ( Select SUM(stockquanlity) AS stockQuanlity
  FROM stock 
  WHERE productid= ( Select productid from stock where id=2 ) ) -55;
+
+Alter table invoice add receivedamount double precision; 	
+
+update invoice set receivedamount=0 where receivedamount=null;
+
+UPDATE invoice 
+SET receivedamount=0
+WHERE receivedamount is null;
+
+Alter table invoice add customerid integer; 
+
+CREATE TABLE printsetting(
+    id serial Primary Key,
+    printname text,
+    createddate timestamp,
+    modifieddate timestamp	
+);
+
+Alter table invoice add warranty boolean; 
+
+Alter table invoice add profit double precision;
+
+Alter table invoiceproduct add purchaseprice double precision;
+
+Alter table 
+stock add expireddate text;
+
+Alter table 
+stock add batchno text;
+
+Alter table 
+invoiceproduct add  batchno text;
+
+Alter table
+invoiceproduct add expireddate text;
+
+
+

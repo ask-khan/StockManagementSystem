@@ -22,6 +22,7 @@ public class OrderList {
     private final StringProperty orderDate;
     private final StringProperty orderAmount;
     private final StringProperty orderArea;
+    private final StringProperty receivedAmount;
 
     /**
      *
@@ -30,15 +31,33 @@ public class OrderList {
      * @param orderDate
      * @param orderAmount
      * @param orderArea
+     * @param receivedAmount
      */
-    public OrderList(int orderId, String orderName, String orderDate, String orderAmount, String orderArea) {
+    public OrderList(int orderId, String orderName, String orderDate, String orderAmount, String orderArea, String receivedAmount) {
         this.orderId = new SimpleIntegerProperty(orderId);
         this.orderName = new SimpleStringProperty(orderName);
         this.orderDate = new SimpleStringProperty(orderDate);
         this.orderAmount = new SimpleStringProperty(orderAmount);
         this.orderArea = new SimpleStringProperty(orderArea);
+        this.receivedAmount = new SimpleStringProperty(receivedAmount );
     }
 
+    /**
+     *
+     * @return
+     */
+    public String getReceivedAmount(){
+        return receivedAmount.get();
+    }
+    
+    /**
+     *
+     * @param receivedAmount
+     */
+    public void setReceivedAmount( String receivedAmount){
+         this.receivedAmount.set( receivedAmount );
+    }
+    
     /**
      * @return the orderId
      */

@@ -18,8 +18,9 @@ public class ValidationDialog {
      *
      * @param attributeName Used for attribute Name
      * @param errorIntCode Used for error Code
+     * @param filePath
      */
-    public void ShowDialog(String attributeName, int errorIntCode) {
+    public void ShowDialog(String attributeName, int errorIntCode, String filePath) {
         String errorMessage = "", errorTitle = "";
 
         switch (errorIntCode) {
@@ -52,8 +53,8 @@ public class ValidationDialog {
                 errorMessage = "Combine discount field is empty.";
                 break;
             case 8:
-                errorTitle = "Good News";
-                errorMessage = "PDF created Successfully:)";
+                errorTitle = "Alert";
+                errorMessage = "PDF created Successfully at: " + filePath;
                 break;
             case 9:
                 errorTitle = "Stock Error";
@@ -62,6 +63,30 @@ public class ValidationDialog {
             case 10:
                 errorTitle = "Unable Delete Stock Error";
                 errorMessage = "Stock cannot be deleted.";
+                break;
+            case 11:
+                errorTitle = "Invalid Customer Name";
+                errorMessage = "Customer name is invalid";
+                break;
+            case 12:
+                errorTitle = "Invalid date patteren";
+                errorMessage = "Start date and end date is invalid";
+                break;
+            case 13:
+                errorTitle = "Alert";
+                errorMessage = "Product PDF created Sucessfully at: " + filePath;
+                break;
+            case 14:
+                errorTitle = "Alert";
+                errorMessage = "Sales PDF created Sucessfully at: " + filePath;
+                break;
+            case 15:
+                errorTitle = "Alert";
+                errorMessage = "Customer PDF created Sucessfully at: " + filePath;
+                break;
+            case 16:
+                errorTitle = "Validation Alert";
+                errorMessage = "Product type is empty.";
                 break;
             default:
                 break;

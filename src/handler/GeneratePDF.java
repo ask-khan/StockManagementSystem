@@ -1,15 +1,24 @@
-/*
+    /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package handler;
 
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -20,9 +29,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import models.PrintModel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
 import util.DBUtil;
@@ -34,156 +46,404 @@ import util.DBUtil;
 public class GeneratePDF {
 
     /**
+     *
+     */
+    protected Font font10;
+
+    /**
+     *
+     */
+    protected Font font10b;
+
+    /**
+     *
+     */
+    protected Font font12;
+
+    /**
+     *
+     */
+    protected Font font12b;
+
+    /**
+     *
+     */
+    protected Font font14;
+
+    /**
+     *
+     * @param writer
+     * @param document
+     */
+    public void onEndPage(PdfWriter writer, Document document) {
+
+        Font labelBold = new Font(FontFamily.COURIER, 16, Font.BOLD);
+        Font labelNormalBold = new Font(FontFamily.COURIER, 8, Font.BOLD);
+
+        PdfContentByte cb = writer.getDirectContent();
+        Phrase header = new Phrase("Minart Traders", labelBold);
+
+        ColumnText.showTextAligned(cb, Element.ALIGN_CENTER,
+                header,
+                (document.right() - document.left()) / 2 + document.leftMargin(),
+                document.top() + 10, 0);
+    }
+
+    /**
      * This Method is used to generate PDF.
      *
      * @param invoiceId
      * @return
      * @throws java.io.IOException
      * @throws com.itextpdf.text.DocumentException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
      */
     public String generatePDFInvoice(String invoiceId) throws IOException, DocumentException, ClassNotFoundException, SQLException {
         ArrayList<String> customerInvoiceData = new ArrayList<String>();
-
+        customerInvoiceData = getCustomerSelectById(Integer.valueOf(invoiceId));
+        ResultSet resultSet = getInvoiceProductListById(Integer.valueOf(invoiceId));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        int invoiceCount = 0;
         DecimalFormat df = new DecimalFormat("###.##");
         // Declare filePath.
-        String filePath = "C:\\Users/Ahmed/Desktop/InvoicePDF/" + invoiceId + ".pdf";
-        
+        String filePath = "C:\\Users/ss/Desktop/InvoicePDF/" + invoiceId + ".pdf";
+
+        Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
+        Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
+        Font AddressNormal = new Font(FontFamily.COURIER, 8, Font.BOLD);
+        Font small = new Font(FontFamily.COURIER, 8, Font.BOLD);
+
         File file = new File(filePath);
-        
+
         // if file is exit
-        if ( file.exists() ) {
+        if (file.exists()) {
             // file delete.
+            //System.out.println("exit");
             file.delete();
         }
-        
-        //Create PdfReader instance. 
-        PdfReader pdfReader = new PdfReader("C:\\Users/Ahmed/Desktop/InvoicePDF/SamplePDF.pdf");
-        
-        
-        //Create PdfStamper instance. 
-        PdfStamper pdfStamper = new PdfStamper(pdfReader, new FileOutputStream(filePath));
 
-        // Declare Font Size.
-        BaseFont baseFont = BaseFont.createFont(BaseFont.COURIER_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+        // step 1
+        Document document = new Document();
+        // step 2
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
 
-        int pages = pdfReader.getNumberOfPages();
+        // step 3
+        document.open();
 
-        // If Page Values is One.
-        if (pages == 1) {
-            // Get customer select by id function call.
-            customerInvoiceData = getCustomerSelectById(Integer.valueOf(invoiceId));
-            ResultSet resultSet = getInvoiceProductListById(Integer.valueOf(invoiceId));
-            System.out.println(customerInvoiceData);
-            PdfContentByte CustomerName = pdfStamper.getOverContent(pages);
-            CustomerName.beginText();
-            //Set text font and size. 
-            CustomerName.setFontAndSize(baseFont, 13);
-            CustomerName.setTextMatrix(75, 665);
-            //Write text 
-            //System.out.println( CustomerData[0]);
-            CustomerName.showText(customerInvoiceData.get(1));
-            CustomerName.endText();
+        onEndPage(writer, document);
 
-            PdfContentByte billNo = pdfStamper.getOverContent(pages);
-            billNo.beginText();
-            //Set text font and size. 
-            billNo.setFontAndSize(baseFont, 13);
-            billNo.setTextMatrix(85, 695);
-            //Write text 
-            billNo.showText(customerInvoiceData.get(0));
-            billNo.endText();
+        Chunk addressChunk = new Chunk("      M.A Mujahid Center Arcade,2 Floor Sector 24,Pl#6/4,Shan Circle Korangi Industrial Area, Karachi", AddressNormal);
 
-            PdfContentByte submitDate = pdfStamper.getOverContent(pages);
-            submitDate.beginText();
-            //Set text font and size. 
-            submitDate.setFontAndSize(baseFont, 13);
-            submitDate.setTextMatrix(465, 695);
-            //Write text 
-            submitDate.showText(customerInvoiceData.get(2));
-            submitDate.endText();
+        Phrase addressPhrase = new Phrase(10);
+        addressPhrase.add(addressChunk);
 
-            int heightValue = 590;
+        document.add(addressPhrase);
 
-            while (resultSet.next()) {
-                // Set Product Quanlity.
-                PdfContentByte ProductQuanlity = pdfStamper.getOverContent(pages);
-                ProductQuanlity.beginText();
-                //Set text font and size. 
-                ProductQuanlity.setFontAndSize(baseFont, 13);
-                ProductQuanlity.setTextMatrix(50, heightValue);
-                ProductQuanlity.showText(resultSet.getString("quanlity"));
-                ProductQuanlity.endText();
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        //System.out.println( customerInvoiceData );
+        PdfPCell seller = getCustomerInformtion("Customer Info",
+                customerInvoiceData.get(5),
+                customerInvoiceData.get(1),
+                "",
+                "");
 
-                // Set Product Packing.
-                PdfContentByte productpacking = pdfStamper.getOverContent(pages);
-                productpacking.beginText();
-                //Set text font and size. 
-                productpacking.setFontAndSize(baseFont, 13);
-                productpacking.setTextMatrix(100, heightValue);
+        table.addCell(seller);
+        PdfPCell buyer = getInvoiceInformation("Invoice Info",
+                invoiceId,
+                dtf.format(now),
+                "");
 
-                ResultSet productDetail = this.getProductDetailById(resultSet.getString("productid"));
-                //System.out.println( productDetail.getInt("productpacking") );
-                //Write text 
-                productpacking.showText(String.valueOf(productDetail.getInt("productpacking")));
-                productpacking.endText();
+        buyer.setPaddingLeft(120);
+        table.addCell(buyer);
+        document.add(table);
 
-                // Set Product Name.
-                PdfContentByte productName = pdfStamper.getOverContent(pages);
-                productName.beginText();
-                //Set text font and size. 
-                productName.setFontAndSize(baseFont, 13);
-                productName.setTextMatrix(165, heightValue);
+        table = new PdfPTable(9);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(10);
+        //table.setSpacingAfter(10);
+        table.setWidths(new int[]{1, 1, 3, 2, 2, 2, 2, 2, 2});
 
-                //Write text 
-                productName.showText(productDetail.getString("productname"));
-                productName.endText();
+        table.addCell(getCell("Sr.#", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Qty.", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Product Name:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Batch No:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Ex Date:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Packing:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("T.P:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Dis %:", Element.ALIGN_LEFT, labelBold));
+        table.addCell(getCell("Net Amount", Element.ALIGN_LEFT, labelBold));
 
-                // Set Product Trade Price.
-                PdfContentByte ProductTradePrice = pdfStamper.getOverContent(pages);
-                ProductTradePrice.beginText();
-                //Set text font and size. 
-                ProductTradePrice.setFontAndSize(baseFont, 13);
-                ProductTradePrice.setTextMatrix(380, heightValue);
-                if (resultSet.getDouble("tradeprice") == productDetail.getDouble("tradeprice")) {
-                    //Write text 
-                    ProductTradePrice.showText(String.valueOf(resultSet.getDouble("tradeprice")));
-                    ProductTradePrice.endText();
-                } else {
-                    //Write text 
-                    ProductTradePrice.showText(String.valueOf(resultSet.getDouble("tradeprice")));
-                    ProductTradePrice.endText();
-                }
-
-                // Set Product Trade Price.
-                PdfContentByte ProductNetAmount = pdfStamper.getOverContent(pages);
-                ProductNetAmount.beginText();
-                //Set text font and size. 
-                ProductNetAmount.setFontAndSize(baseFont, 13);
-                ProductNetAmount.setTextMatrix(500, heightValue);
-
-                //Write text 
-                ProductNetAmount.showText(resultSet.getString("amount"));
-                ProductNetAmount.endText();
-
-                heightValue = heightValue - 13;
-            }
-
-            // Set Product Total Price.
-            PdfContentByte ProductTotalMainPrice = pdfStamper.getOverContent(pages);
-            ProductTotalMainPrice.beginText();
-            //Set text font and size. 
-            ProductTotalMainPrice.setFontAndSize(baseFont, 13);
-            ProductTotalMainPrice.setTextMatrix(510, 112);
-            //Write text 
-            ProductTotalMainPrice.showText(customerInvoiceData.get(3));
-            ProductTotalMainPrice.endText();
-
-            pdfStamper.close();
+        while (resultSet.next()) {
+            invoiceCount++;
+            table.addCell(getCell(String.valueOf(invoiceCount), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("quanlity"), Element.ALIGN_LEFT, normal));
+            ResultSet productDetail = this.getProductDetailById(resultSet.getString("productid"));
+            table.addCell(getCell(productDetail.getString("productname"), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("batchno"), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("expireddate"), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(String.valueOf(productDetail.getInt("productpacking")), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(String.valueOf(resultSet.getDouble("tradeprice")), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("productdiscount"), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("amount"), Element.ALIGN_LEFT, normal));
         }
+
+        document.add(table);
+
+        table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+        PdfPCell itemNo = addItemCount(invoiceCount);
+        itemNo.setPaddingBottom(10);
+        table.addCell(itemNo);
+
+        PdfPCell totalAmount = addtotalAmount(customerInvoiceData.get(3), getPreviousBalance(String.valueOf(invoiceId), customerInvoiceData.get(1)), customerInvoiceData.get(4), getCurrentBalance(customerInvoiceData.get(1)));
+        totalAmount.setPaddingLeft(120);
+        totalAmount.setPaddingBottom(10);
+        table.addCell(totalAmount);
+
+        document.add(table);
+
+        if ("true".equals(customerInvoiceData.get(6))) {
+            Chunk chunk = new Chunk("Warranty:Expired products shall not be taken unless written initimation is given 4 months before expiry date , Please check for Batch no, Leaking, Breaking, shortage and discount before the goods have been delivered.\n", small);
+            //chunk.setUnderline(1.5f, -1);
+            Phrase phrase = new Phrase(5);
+            phrase.add(chunk);
+            document.add(phrase);
+        }
+
+        Chunk linebreak = new Chunk(new DottedLineSeparator());
+        document.add(linebreak);
+
+        document.close();
+
         return filePath;
     }
 
+    /**
+     *
+     * @param billAmount
+     * @param previousBalance
+     * @param received
+     * @param balance
+     * @return
+     */
+    public PdfPCell addtotalAmount(String billAmount, float previousBalance, String received, float balance) {
+        Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
+        Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
+
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(PdfPCell.NO_BORDER);
+        cell.setPaddingTop(0);
+
+        // Bill Info Detail    
+        Paragraph billAmountParagraphy = new Paragraph();
+        Chunk billAmountChunk = new Chunk("Bill Amount: " +  String.valueOf((int) Math.round(Float.valueOf(billAmount))), labelBold);
+        billAmountParagraphy.add(billAmountChunk);
+        cell.addElement(billAmountParagraphy);
+
+        // Previous Amount Detail    
+        Paragraph previousBalanceParagraphy = new Paragraph();
+        Chunk previousBalanceChunk = new Chunk("Previous Balance: " + String.valueOf( (int) Math.round(previousBalance)), labelBold);
+        previousBalanceParagraphy.add(previousBalanceChunk);
+        cell.addElement(previousBalanceParagraphy);
+
+        // Previous Amount Detail    
+        Paragraph receivedParagraphy = new Paragraph();
+        Chunk receivedChunk = new Chunk("Received: " +  received, labelBold);
+        receivedParagraphy.add(receivedChunk);
+        cell.addElement(receivedParagraphy);
+
+        // Balance Amount Detail    
+        Paragraph balanceParagraphy = new Paragraph();
+        Chunk balanceChunk = new Chunk("Balance: " + String.valueOf( (int) Math.round(balance)), labelBold);
+        balanceParagraphy.add(balanceChunk);
+        cell.addElement(balanceParagraphy);
+
+        return cell;
+    }
+
+    /**
+     *
+     * @param invoiceCount
+     * @return
+     */
+    public PdfPCell addItemCount(int invoiceCount) {
+
+        Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
+        Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
+        Font warrantyLabelBold = new Font(FontFamily.COURIER, 8, Font.BOLD);
+        //Font warrantyLabelDefinationBold = new Font(FontFamily.COURIER, 6, Font.NORMAL);
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(PdfPCell.NO_BORDER);
+
+        // Customer Info Label    
+        Paragraph itemNoParagraphy = new Paragraph();
+        Chunk itemNoChunk = new Chunk("No of Items: " + String.valueOf(invoiceCount), labelBold);
+        itemNoParagraphy.add(itemNoChunk);
+        cell.addElement(itemNoParagraphy);
+
+        Paragraph blankParagraphy = new Paragraph();
+        Chunk blankChunk = new Chunk(" ");
+        blankParagraphy.add(blankChunk);
+        cell.addElement(blankParagraphy);
+
+        Paragraph oneblankParagraphy = new Paragraph();
+        Chunk oneblankChunk = new Chunk(" ");
+        oneblankParagraphy.add(oneblankChunk);
+        cell.addElement(oneblankParagraphy);
+
+        Paragraph signatureParagraphy = new Paragraph();
+        Chunk signatureChunk = new Chunk("Signature : ", warrantyLabelBold);
+        //Chunk warrantyDefinedChunk = new Chunk("Expired products shall not be taken unless written initimation is given 4 months before expiry date , Please check for Batch no, Leaking, Breaking, shortage and discount before the goods have been delivered.", warrantyLabelDefinationBold);
+        Chunk linebreak = new Chunk(new DottedLineSeparator());
+        signatureParagraphy.add(signatureChunk);
+        signatureParagraphy.add(linebreak);
+
+        cell.addElement(signatureParagraphy);
+        return cell;
+    }
+
+    /**
+     *
+     * @param value
+     * @param alignment
+     * @param font
+     * @return
+     */
+    public PdfPCell getCell(String value, int alignment, Font font) {
+        PdfPCell cell = new PdfPCell();
+        Paragraph p = new Paragraph(value, font);
+        p.setAlignment(alignment);
+        cell.addElement(p);
+        return cell;
+    }
+
+    /**
+     *
+     * @param title
+     * @param customerCode
+     * @param customerName
+     * @param customerContact
+     * @param customerAddress
+     * @return
+     */
+    public PdfPCell getCustomerInformtion(String title, String customerCode, String customerName, String customerContact, String customerAddress) {
+
+        Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
+        Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
+
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(PdfPCell.NO_BORDER);
+        //cell.setPadding(0);
+        cell.setPadding(0);
+        cell.setFixedHeight(60);
+
+        // Customer Info Label    
+        Paragraph customerInfoLabelParagraphy = new Paragraph();
+        Chunk customerLabelChunk = new Chunk(title, labelBold);
+        customerInfoLabelParagraphy.add(customerLabelChunk);
+        cell.addElement(customerInfoLabelParagraphy);
+        cell.setPadding(0);
+        cell.setFixedHeight(60);
+
+        // Customer Code Label.
+        Paragraph customerCodeParagraphy = new Paragraph();
+        Chunk customerCodeLabelChunk = new Chunk("Code: ", labelBold);
+        Chunk customerCodeChunk = new Chunk(customerCode, normal);
+        customerCodeParagraphy.add(customerCodeLabelChunk);
+        customerCodeParagraphy.add(customerCodeChunk);
+        cell.addElement(new Paragraph(customerCodeParagraphy));
+        cell.setPadding(0);
+        cell.setFixedHeight(60);
+
+        // Customer Name Label.
+        Paragraph customerNameParagraphy = new Paragraph();
+        Chunk customerNameLabelChunk = new Chunk("Name: ", labelBold);
+        Chunk customerNameChunk = new Chunk(customerName, normal);
+        customerNameParagraphy.add(customerNameLabelChunk);
+        customerNameParagraphy.add(customerNameChunk);
+        cell.addElement(new Paragraph(customerNameParagraphy));
+        cell.setPadding(0);
+        cell.setFixedHeight(60);
+
+        // Customer Address Label.
+        Paragraph customerAddressParagraphy = new Paragraph();
+        Chunk customerAddressLabelChunk = new Chunk("Address: ", labelBold);
+        Chunk customerAddressChunk = new Chunk(customerAddress, normal);
+        customerAddressParagraphy.add(customerAddressLabelChunk);
+        customerAddressParagraphy.add(customerAddressChunk);
+        cell.addElement(new Paragraph(customerAddressParagraphy));
+
+        // Customer Contact Label.
+        Paragraph customerContactParagraphy = new Paragraph();
+        Chunk customerContactLabelChunk = new Chunk("Contact: ", labelBold);
+        Chunk customerContactChunk = new Chunk(customerContact, normal);
+        customerContactParagraphy.add(customerContactLabelChunk);
+        customerContactParagraphy.add(customerContactChunk);
+
+        cell.addElement(new Paragraph(customerContactParagraphy));
+
+        return cell;
+    }
+
+    /**
+     *
+     * @param title
+     * @param invoiceId
+     * @param invoiceDate
+     * @param invoiceTerm
+     * @return
+     */
+    public PdfPCell getInvoiceInformation(String title, String invoiceId, String invoiceDate, String invoiceTerm) {
+        Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
+        Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
+
+        PdfPCell cell = new PdfPCell();
+        cell.setBorder(PdfPCell.NO_BORDER);
+
+        // Invoice Info Label    
+        Paragraph invoiceInfoLabelParagraphy = new Paragraph();
+        Chunk invoiceLabelChunk = new Chunk(title, labelBold);
+        invoiceInfoLabelParagraphy.add(invoiceLabelChunk);
+        cell.addElement(invoiceInfoLabelParagraphy);
+
+        // Invoice Id Label    
+        Paragraph invoiceIdLabelParagraphy = new Paragraph();
+        Chunk invoiceIdLabelChunk = new Chunk("Invoice #: ", labelBold);
+        Chunk invoiceChunk = new Chunk(invoiceId, normal);
+        invoiceIdLabelParagraphy.add(invoiceIdLabelChunk);
+        invoiceIdLabelParagraphy.add(invoiceChunk);
+        cell.addElement(invoiceIdLabelParagraphy);
+
+        // Invoice Date Label  
+        Paragraph invoiceDateLabelParagraphy = new Paragraph();
+        Chunk invoiceDateLabelChunk = new Chunk("Date: ", labelBold);
+        Chunk invoiceDateChunk = new Chunk(invoiceDate, normal);
+        invoiceDateLabelParagraphy.add(invoiceDateLabelChunk);
+        invoiceDateLabelParagraphy.add(invoiceDateChunk);
+        cell.addElement(invoiceDateLabelParagraphy);
+
+        Paragraph invoiceTermLabelParagraphy = new Paragraph();
+        Chunk invoiceTermLabelChunk = new Chunk("Term: ", labelBold);
+        Chunk invoiceTermChunk = new Chunk(invoiceTerm, normal);
+        invoiceTermLabelParagraphy.add(invoiceTermLabelChunk);
+        invoiceTermLabelParagraphy.add(invoiceTermChunk);
+        cell.addElement(invoiceTermLabelParagraphy);
+
+        return cell;
+    }
+
     // Get Selected By Id.
+
+    /**
+     *
+     * @param invoiceId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public ArrayList getCustomerSelectById(int invoiceId) throws ClassNotFoundException, SQLException {
         ArrayList<String> customerInvoiceData = new ArrayList<String>();
 
@@ -203,11 +463,22 @@ public class GeneratePDF {
             customerInvoiceData.add(resultSet.getString("customername"));
             customerInvoiceData.add(resultSet.getString("datepicker"));
             customerInvoiceData.add(String.valueOf(resultSet.getDouble("totalamount")));
+            customerInvoiceData.add(String.valueOf(resultSet.getDouble("receivedamount")));
+            customerInvoiceData.add(String.valueOf(resultSet.getInt("customerid")));
+            customerInvoiceData.add(String.valueOf(resultSet.getBoolean("warranty")));
         }
         return customerInvoiceData;
     }
 
     // Get Invoice Product List By Id.
+
+    /**
+     *
+     * @param invoiceId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public ResultSet getInvoiceProductListById(int invoiceId) throws ClassNotFoundException, SQLException {
         ArrayList<String> customerInvoiceData = new ArrayList<String>();
 
@@ -226,6 +497,80 @@ public class GeneratePDF {
         return resultSet;
     }
 
+    /**
+     *
+     * @param invoice
+     * @param customerName
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public float getPreviousBalance(String invoice, String customerName) throws ClassNotFoundException, SQLException {
+        DBUtil dbObject = new DBUtil();
+        float previousBalance = 0;
+        Connection connection = dbObject.DbConnection();
+        connection.setAutoCommit(false);
+        Statement statementObject = connection.createStatement();
+
+        String getAllInvoiceQuery = "Select sum( totalamount ) - sum( receivedamount ) as previousbalance from invoice where customername='" + customerName + "' AND id <>'" + invoice + "';";
+        System.out.println(getAllInvoiceQuery);
+        ResultSet resultSet = statementObject.executeQuery(getAllInvoiceQuery);
+
+        if (resultSet.next()) {
+            previousBalance = resultSet.getFloat("previousbalance");
+        }
+
+        return previousBalance;
+    }
+
+    /**
+     *
+     * @param customerName
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public float getCurrentBalance(String customerName) throws ClassNotFoundException, SQLException {
+        DBUtil dbObject = new DBUtil();
+        float previousBalance = 0;
+        Connection connection = dbObject.DbConnection();
+        connection.setAutoCommit(false);
+        Statement statementObject = connection.createStatement();
+
+        String getAllInvoiceQuery = "Select sum( totalamount ) - sum( receivedamount ) as currentbalance from invoice where customername='" + customerName + "';";
+        System.out.println(getAllInvoiceQuery);
+        ResultSet resultSet = statementObject.executeQuery(getAllInvoiceQuery);
+
+        if (resultSet.next()) {
+            previousBalance = resultSet.getFloat("currentbalance");
+        }
+
+        return previousBalance;
+    }
+
+    /**
+     *
+     * @param content
+     * @param borderWidth
+     * @param colspan
+     * @param alignment
+     * @return
+     */
+    public PdfPCell createCell(String content, float borderWidth, int colspan, int alignment) {
+        PdfPCell cell = new PdfPCell(new Phrase(content));
+        cell.setBorderWidth(borderWidth);
+        cell.setColspan(colspan);
+        cell.setHorizontalAlignment(alignment);
+        return cell;
+    }
+
+    /**
+     *
+     * @param productId
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public ResultSet getProductDetailById(String productId) throws ClassNotFoundException, SQLException {
         ArrayList<String> customerInvoiceData = new ArrayList<String>();
 
@@ -255,14 +600,21 @@ public class GeneratePDF {
      * @param Path Path of the PDF.
      * @exception IOException On input error.
      * @exception PrinterException On print error.
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.sql.SQLException
      * @see IOException
      * @see PrinterException
      */
-    public void PrintPDF(String Path) throws IOException, PrinterException {
+    public void PrintPDF(String Path) throws IOException, PrinterException, SQLException, ClassNotFoundException {
         // Create PDDocument
+        System.out.println(Path);
         PDDocument document = PDDocument.load(new File(Path));
+        System.out.println(Path);
+        PrintModel printModel = new PrintModel();
+        String printName = printModel.getPrintName();
+        System.out.println(printName);
         // Function Call for PrintService.
-        PrintService myPrintService = findPrintService("hp LaserJet 3015 UPD PCL 5");
+        PrintService myPrintService = findPrintService(printName);
         // Get PrinterJob.
         PrinterJob job = PrinterJob.getPrinterJob();
         // Show Dialog

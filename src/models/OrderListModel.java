@@ -26,7 +26,7 @@ public class OrderListModel {
      * @throws SQLException
      */
     public void deleteInvoice(int invoiceId) throws ClassNotFoundException, SQLException {
-
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
@@ -49,19 +49,39 @@ public class OrderListModel {
 
     /**
      *
-     * @param orderList
+     * @param orderId
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public ResultSet getAllInvoiceProductById(OrderList orderList) throws ClassNotFoundException, SQLException {
-
+    public ResultSet getAllInvoiceProductById(int orderId) throws ClassNotFoundException, SQLException {
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
         Statement statementObject = connection.createStatement();
         // Select Invoice Query 
-        String selectInvoiceProductQuery = "Select * from invoiceproduct where invoiceid='" + orderList.getOrderId() + "';";
+        String selectInvoiceProductQuery = "Select * from invoiceproduct where invoiceid='" + orderId + "';";
+        ResultSet resultSet = statementObject.executeQuery(selectInvoiceProductQuery);
+
+        return resultSet;
+
+    }
+    
+    /**
+     * @param orderId 
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    public ResultSet getCustomerId(String orderId) throws ClassNotFoundException, SQLException {
+        // Initialize Db Instance.
+        DBUtil dbObject = new DBUtil();
+        Connection connection = dbObject.DbConnection();
+        connection.setAutoCommit(false);
+        Statement statementObject = connection.createStatement();
+        // Select Invoice Query 
+        String selectInvoiceProductQuery = "Select * from invoice where id='" +  orderId + "';";
         ResultSet resultSet = statementObject.executeQuery(selectInvoiceProductQuery);
 
         return resultSet;
@@ -76,6 +96,7 @@ public class OrderListModel {
      * @throws SQLException
      */
     public ResultSet getProductById(String productId) throws ClassNotFoundException, SQLException {
+        // Initialize Db Instance.
         DBUtil dbObject = new DBUtil();
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
