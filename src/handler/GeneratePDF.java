@@ -107,28 +107,39 @@ public class GeneratePDF {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
+
         int invoiceCount = 0;
         DecimalFormat df = new DecimalFormat("###.##");
-        
-        // Declare Configuration Object.
-        Configuration configurationObject = new Configuration();
-        // Declare filePath.
-        String filePath = configurationObject.getFolderPath() + invoiceId + "-" + customerInvoiceData.get(1) + ".pdf";
 
         Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
         Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
         Font AddressNormal = new Font(FontFamily.COURIER, 8, Font.BOLD);
         Font small = new Font(FontFamily.COURIER, 8, Font.BOLD);
 
-        File file = new File(filePath);
-
-        // if file is exit
-        if (file.exists()) {
-            // file delete.
-            //System.out.println("exit");
-            file.delete();
+        String filePath = "", folderPath = "";
+        // Declare Configuration Object.
+        Configuration configurationObject = new Configuration();
+        
+        // Customer Folder Path And File Path.
+        folderPath = configurationObject.getFolderPath() + "Customers-Invoice\\" + customerInvoiceData.get(1).replaceAll(" ", "-"); 
+        filePath = folderPath + "/" + invoiceId + ".pdf";
+        
+        File folderObject = new File(folderPath);
+        if (!folderObject.exists()) {
+            if (folderObject.mkdir()) {
+                // Declare filePath.
+                File file = new File(filePath);
+                // if file is exit
+                if (file.exists()) {
+                    // file delete.
+                    //System.out.println("exit");
+                    file.delete();
+                }
+            } else {
+                System.out.println("Failed to create directory!");
+            }
         }
-
+        System.out.println(filePath);
         // step 1
         Document document = new Document();
         // step 2
