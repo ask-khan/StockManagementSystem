@@ -6,8 +6,6 @@
 package controllers;
 
 import handler.CustomerView;
-import handler.InvoiceProduct;
-import handler.OrderList;
 import handler.customerTable;
 import java.io.IOException;
 import java.net.URL;
@@ -94,9 +92,7 @@ public class CustomerViewController implements Initializable {
             }
             // Auto Complete of customer view name.
             TextFields.bindAutoCompletion(customerViewName, customerList);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CustomerViewController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(CustomerViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -125,13 +121,13 @@ public class CustomerViewController implements Initializable {
                 //System.out.println( lowerCaseFilter );
 
                 if (String.valueOf(CustomerView.getInvoiceIdColumns()).contains(lowerCaseFilter)) {
-                    System.out.println(String.valueOf(CustomerView.getInvoiceIdColumns()).contains(lowerCaseFilter));
+                    //System.out.println(String.valueOf(CustomerView.getInvoiceIdColumns()).contains(lowerCaseFilter));
                     return true; // Filter matches first name.
                 } else if (CustomerView.getCustomerIdColumns().toLowerCase().contains(lowerCaseFilter)) {
-                    System.out.println(CustomerView.getCustomerIdColumns().toLowerCase().contains(lowerCaseFilter));
+                    //System.out.println(CustomerView.getCustomerIdColumns().toLowerCase().contains(lowerCaseFilter));
                     return true; // Filter matches last name.
                 } else if (String.valueOf(CustomerView.getProductNoColumns()).contains(lowerCaseFilter)) {
-                    System.out.println(String.valueOf(CustomerView.getProductNoColumns()).contains(lowerCaseFilter));
+                    //System.out.println(String.valueOf(CustomerView.getProductNoColumns()).contains(lowerCaseFilter));
                     return true; // Filter matches first name.
                 }
                 return false; // Does not match.

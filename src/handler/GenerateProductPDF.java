@@ -17,6 +17,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import config.Configuration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,8 +71,11 @@ public class GenerateProductPDF {
         int invoiceCount = 0, productTotalQuanlity = 0;
         double totalAmount = 0;
         DecimalFormat df = new DecimalFormat("###.##");
+        
+        // Declare Configuration Object.
+        Configuration configurationObject = new Configuration();
         // Declare filePath.
-        String filePath = "C:\\Users/ss/Desktop/InvoicePDF/ProductReports/" + productId + ".pdf";
+        String filePath =  configurationObject.getFolderPath() + "ProductReports/" + productId + ".pdf";
 
         File file = new File(filePath);
 

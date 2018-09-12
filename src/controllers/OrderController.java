@@ -29,6 +29,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -37,6 +39,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -56,37 +59,22 @@ import org.controlsfx.control.textfield.TextFields;
 public class OrderController implements Initializable {
 
     // Declare Customer Name, Area Text, Quanlity, Product Packing, Trade Price.
-    /**
-     *
-     */
     @FXML
-    public JFXTextField areaTextField, stockTextField,
-            /**
-             *
-             */
+    public JFXTextField areaTextField,
+            stockTextField,
             quanlityTextField,
-            /**
-             *
-             */
             productPackingTextField,
-            /**
-             *
-             */
             tradePriceTextField,
-            productdiscountTextField, customerIdTextField, expiredDate;
+            productdiscountTextField, customerIdTextField, expiredDate, bonusTextField;
+
+    @FXML
+    public ChoiceBox<String> discountPackage = new ChoiceBox<String>();
 
     // Declare order Print
-
-    /**
-     *
-     */
     @FXML
     public JFXCheckBox orderPrint,
+            orderWarranty;
 
-    /**
-     *
-     */
-    orderWarranty;
     // Declare Date Picker.
     @FXML
     private DatePicker datePicker;
@@ -131,40 +119,37 @@ public class OrderController implements Initializable {
     @FXML
     private TableColumn<InvoiceProduct, Integer> productQuanlity;
     @FXML
+    private TableColumn<InvoiceProduct, Integer> productBonus;
+    @FXML
     private TableColumn<InvoiceProduct, Float> productAmount;
     @FXML
     private TableColumn<InvoiceProduct, Double> productDiscount;
 
     // Declare arraylist productPriceList.
-
     /**
      *
      */
     public ArrayList<String> productPriceList = new ArrayList<String>();
 
     // Declare arraylist productPackingList.
-
     /**
      *
      */
     public ArrayList<String> productPackingList = new ArrayList<String>();
 
     // Declare arraylist productSelectedId
-
     /**
      *
      */
     public ArrayList<String> productSelectedId = new ArrayList<String>();
 
     // Declare arraylist customer contact.
-
     /**
      *
      */
     public ArrayList<String> customerContact = new ArrayList<String>();
 
     // Declare arraylist customer area.
-
     /**
      *
      */
@@ -182,12 +167,38 @@ public class OrderController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // Declare discountPackage variable for choicebox.
+        final String[] discountPackages = new String[]{"Individuals", "Bonus"};
+
+        // Default productdiscountTextField, bonusTextField  Hidden.
+        productdiscountTextField.setVisible(false);
+        bonusTextField.setVisible(false);
+
+        // Declare Packages for choicebox
+        ObservableList<String> cursors = FXCollections.observableArrayList("Individuals", "Bonus");
+        discountPackage.setItems(cursors);
+
+        // Get Select Choice Box value whenever its change.
+        discountPackage.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue observable, Number value, Number new_value) {
+                // Check if discount package is equal to combine
+                if (discountPackages[new_value.intValue()].equals("Individuals")) {
+                    productdiscountTextField.setVisible(true);
+                    bonusTextField.setVisible(false);
+                } else if (discountPackages[new_value.intValue()].equals("Bonus")) {
+                    productdiscountTextField.setVisible(false);
+                    bonusTextField.setVisible(true);
+                }
+            }
+        });
+
         // Declare Date Object and set to right now date.
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate now = LocalDate.now();
         customerIdTextField.setVisible(false);
         // Set Product Discount 
-        productdiscountTextField.setText("0");
+        //productdiscountTextField.setText("0");
 
         // Set Received.
         receivedAmountTextField.setText("0");
@@ -228,7 +239,7 @@ public class OrderController implements Initializable {
             ObservableList<String> productList = FXCollections.observableArrayList();
 
             while (resultSet.next()) {
-                ProductTable productObject = new ProductTable(resultSet.getInt("id"), resultSet.getInt("productpacking"), (float) resultSet.getDouble("tradeprice"), resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("producttype"), resultSet.getString("modifieddate"));
+                ProductTable productObject = new ProductTable(resultSet.getInt("id"), resultSet.getInt("productpacking"), (float) resultSet.getDouble("tradeprice"), resultSet.getString("productname"), resultSet.getString("brandname"), (float) resultSet.getDouble("purchaseprice"), resultSet.getString("suppliername"), resultSet.getString("productype"), resultSet.getString("modifieddate"));
                 productList.add(productObject.getProductCode() + ":" + productObject.getProductName());
             }
             TextFields.bindAutoCompletion(productListTextfield, productList);
@@ -240,6 +251,7 @@ public class OrderController implements Initializable {
             productPacking.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productPacking"));
             productAmount.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Float>("productAmount"));
             productQuanlity.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productQuanlity"));
+            productBonus.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productBonus"));
             productId.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Integer>("productId"));
             productDiscount.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, Double>("productDiscount"));
             productBatchNo.setCellValueFactory(new PropertyValueFactory<InvoiceProduct, String>("productBatchNo"));
@@ -266,6 +278,18 @@ public class OrderController implements Initializable {
         RequiredFieldValidator productQuanlityValidator = new RequiredFieldValidator();
         // Product Name Validator.
         RequiredFieldValidator productNameValidator = new RequiredFieldValidator();
+        // Product Bonus Validator.
+        RequiredFieldValidator productBonusValidator = new RequiredFieldValidator();
+        // Product Discount Validator.
+        RequiredFieldValidator productDiscountValidator = new RequiredFieldValidator();
+
+        // Product Bonus Message.
+        productBonusValidator.setMessage("Product Bonus cannot be empty.");
+        bonusTextField.getValidators().add(tradePriceValidator);
+
+        // Product Discount Message.
+        productDiscountValidator.setMessage("Product Discount cannot be empty.");
+        productdiscountTextField.getValidators().add(productDiscountValidator);
 
         // Product Packing Message.
         productPackingValidator.setMessage("Product packing cannot be empty.");
@@ -292,11 +316,21 @@ public class OrderController implements Initializable {
             quanlityTextField.validate();
         }
 
+        // get product package.
+        String productPackage = (String) (discountPackage.getValue());
+
+        if (productPackage == null) {
+            ValidationDialog validationDialog = new ValidationDialog();
+            validationDialog.ShowDialog("", 17, "");
+            return;
+        }
+
         // Trade Price Validation.
         if (!tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText())) {
             productInvoiceList.add(tradePriceTextField.getText());
         } else {
             tradePriceTextField.validate();
+            return;
         }
 
         // Product Line Combo box Validation.
@@ -306,9 +340,27 @@ public class OrderController implements Initializable {
             //productLineComboBox.validate();
         }
 
+        // Individuals Product Package.
+        if (productdiscountTextField.getText().isEmpty() && "Individuals".equals(productPackage)) {
+            productdiscountTextField.validate();
+            return;
+        }
+
+        // Bonus Product Package.
+        if (bonusTextField.getText().isEmpty() && "Bonus".equals(productPackage)) {
+            bonusTextField.validate();
+            return;
+        }
+
         // Quanlity Validation.
         if (!quanlityTextField.getText().isEmpty() && this.validationInteger(quanlityTextField.getText()) && !tradePriceTextField.getText().isEmpty() && this.validationIntegerOrFloat(tradePriceTextField.getText())) {
-            double discount = (double) Double.parseDouble(productdiscountTextField.getText()) / 100;
+            // Declare discount.
+            double discount = 0;
+            if ("Bonus".equals(productPackage)) {
+                discount = (double) Double.parseDouble("0") / 100;
+            } else if ("Individuals".equals(productPackage)) {
+                discount = (double) Double.parseDouble(productdiscountTextField.getText()) / 100;
+            }
             double productAmountSelected = (double) ((Float.parseFloat(tradePriceTextField.getText()) * Integer.parseInt(quanlityTextField.getText()) * (double) discount));
 
             productAmountSelected = Float.parseFloat(tradePriceTextField.getText()) * Integer.parseInt(quanlityTextField.getText()) - productAmountSelected;
@@ -316,26 +368,38 @@ public class OrderController implements Initializable {
         }
 
         // Product Discount Validation.
-        if (!productdiscountTextField.getText().isEmpty() && this.validationIntegerOrFloat(productdiscountTextField.getText())) {
+        if (!productdiscountTextField.getText().isEmpty() && this.validationIntegerOrFloat(productdiscountTextField.getText()) && "Individuals".equals(productPackage)) {
             productInvoiceList.add(String.valueOf(Double.parseDouble(productdiscountTextField.getText())));
+        } else if ("Bonus".equals(productPackage)) {
+            productInvoiceList.add("0");
         }
 
         // Product Batch No Validation.
         if (!batchNo.getValue().isEmpty()) {
             productInvoiceList.add(batchNo.getValue());
         }
-
+        // Expired Date Validation.
         if (!expiredDate.getText().isEmpty()) {
             productInvoiceList.add(expiredDate.getText());
         }
 
+        // Product Package 
+        if ("Individuals".equals(productPackage)) {
+            productInvoiceList.add("0");
+        } else if ("Bonus".equals(productPackage)) {
+            productInvoiceList.add(bonusTextField.getText());
+        }
+
         //System.out.println(productInvoiceList);
         // if product voice list is valid.
-        if (productInvoiceList.size() == 8) {
-            System.out.println(productInvoiceList );
+        if (productInvoiceList.size() == 9) {
+            //System.out.println(productInvoiceList);
             if (Integer.parseInt(stockTextField.getText()) >= Integer.parseInt(quanlityTextField.getText())) {
-                InvoiceProduct invoiceProduct = new InvoiceProduct(productInvoiceList.get(3), Integer.valueOf(productInvoiceList.get(0)), Integer.valueOf(productInvoiceList.get(1)), Float.valueOf(productInvoiceList.get(2)), Float.valueOf(productInvoiceList.get(4)), Integer.valueOf(selectedProductId), Double.valueOf(productInvoiceList.get(5)), productInvoiceList.get(7), productInvoiceList.get(6));
+                // Add Product Data Into Table.
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productInvoiceList.get(3), Integer.valueOf(productInvoiceList.get(0)), Integer.valueOf(productInvoiceList.get(1)), Float.valueOf(productInvoiceList.get(2)), Float.valueOf(productInvoiceList.get(4)), Integer.valueOf(selectedProductId), Double.valueOf(productInvoiceList.get(5)), productInvoiceList.get(7), productInvoiceList.get(6), Integer.valueOf(productInvoiceList.get(8)));
                 productInvoiceData.add(invoiceProduct);
+                // Reset Function Call.
+                resetProductFields();
 
                 if (!totalAmountTextField.getText().isEmpty()) {
                     float total = Float.valueOf(totalAmountTextField.getText()) + Float.valueOf(productInvoiceList.get(4));
@@ -350,8 +414,18 @@ public class OrderController implements Initializable {
             }
 
         } else {
-
+            System.out.print("else");
         }
+    }
+
+    private void resetProductFields() {
+        productPackingTextField.setText("");
+        productListTextfield.setText("");
+        batchNo.setValue("");
+        stockTextField.setText("");
+        quanlityTextField.setText("");
+        productdiscountTextField.setText("");
+        tradePriceTextField.setText("");
     }
 
     @FXML
@@ -503,17 +577,16 @@ public class OrderController implements Initializable {
         // Area Validator.
         areaValidator.setMessage("Area cannot be empty.");
         areaTextField.getValidators().add(areaValidator);
-        System.out.println(customerNameTextField.getText());
+        //System.out.println(customerNameTextField.getText());
         // Customer Name is validator
         if (!customerNameTextField.getText().isEmpty() && !this.validationIntegerOrFloat(customerNameTextField.getText())) {
             customerInvoiceData.add(customerNameTextField.getText());
         } else if (customerNameTextField.getText() == null) {
             //customerNameTextField.validate();
-
         }
 
         // Area is validator.
-        if (!areaTextField.getText().isEmpty() && !this.validationIntegerOrFloat(areaTextField.getText())) {
+        if (!areaTextField.getText().isEmpty()) {
             customerInvoiceData.add(areaTextField.getText());
         } else {
             areaTextField.validate();
@@ -530,19 +603,22 @@ public class OrderController implements Initializable {
             customerInvoiceData.add(totalAmountTextField.getText());
         }
 
-        // invoice validator
+        // Invoice Id validator
         if (!invoiceId.getText().isEmpty()) {
             customerInvoiceData.add(invoiceId.getText());
         }
 
+        // Received Amount Validator.
         if (!receivedAmountTextField.getText().isEmpty() && validationIntegerOrFloat(receivedAmountTextField.getText())) {
             customerInvoiceData.add(receivedAmountTextField.getText());
         }
 
+        // Customer Id Validator.
         if (!customerIdTextField.getText().isEmpty() && validationIntegerOrFloat(customerIdTextField.getText())) {
             customerInvoiceData.add(customerIdTextField.getText());
         }
 
+        // Customer Information. 
         customerInvoiceData.add(String.valueOf(orderWarranty.isSelected()));
         //System.out.println( customerInvoiceData.size() );
         if (invoiceProductTable.getItems().size() > 0) {
@@ -618,6 +694,7 @@ public class OrderController implements Initializable {
                 productInvoiceList.add(String.valueOf(invoiceProductObject.getProductDiscount()));
                 productInvoiceList.add(String.valueOf(invoiceProductObject.getProductExpiredDate()));
                 productInvoiceList.add(String.valueOf(invoiceProductObject.getProductBatchNo()));
+                productInvoiceList.add(String.valueOf(invoiceProductObject.getProductBonus()));
 
                 // Order Insert Invoice Product List Function Call.
                 if (checkInsert == true) {
@@ -670,7 +747,7 @@ public class OrderController implements Initializable {
                 float tradePrice = (float) resultSet.getDouble("tradeprice");
                 // invoice product object.
                 //System.out.println(resultSet.getString("productid") + resultSet.getString("productdiscount"));
-                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")),  Double.parseDouble(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"));
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")), Double.parseDouble(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"), Integer.valueOf(resultSet.getString("bonus") == null ? "0" : resultSet.getString("bonus")));
                 // add object in table.
                 productInvoiceData.add(invoiceProduct);
             }
@@ -688,9 +765,9 @@ public class OrderController implements Initializable {
         // get customer info by order id.
         ResultSet orderListSet = orderListModel.getCustomerId(invoiceId);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
-        
+
         if (orderListSet.next()) {
-            
+
             LocalDate localDate = LocalDate.parse(orderListSet.getString("datepicker"), formatter);
             this.invoiceId.setText(invoiceId);
             this.customerNameTextField.setText(orderListSet.getString("customername"));
@@ -701,11 +778,11 @@ public class OrderController implements Initializable {
             this.customerIdTextField.setText(String.valueOf(orderListSet.getInt("customerid")));
             this.orderWarranty.setSelected(orderListSet.getBoolean("warranty"));
         }
-        
+
         OrderListModel listModel = new OrderListModel();
         // get all invoice product by id function call.
         ResultSet resultSet = listModel.getAllInvoiceProductById(Integer.valueOf((invoiceId)));
-        
+
         // while loops
         while (resultSet.next()) {
             // function call get product detail by id.
@@ -716,12 +793,12 @@ public class OrderController implements Initializable {
                 float tradePrice = (float) resultSet.getDouble("tradeprice");
                 // invoice product object.
                 //System.out.println(resultSet.getString("productid") + resultSet.getString("productdiscount"));
-                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")), Integer.valueOf(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"));
+                InvoiceProduct invoiceProduct = new InvoiceProduct(productDetail.getString("productname"), productDetail.getInt("productpacking"), Integer.valueOf(resultSet.getString("quanlity")), tradePrice, Float.valueOf(resultSet.getString("amount")), Integer.valueOf(resultSet.getString("productid")), (int) Double.parseDouble(resultSet.getString("productdiscount")), resultSet.getString("expireddate"), resultSet.getString("batchno"), resultSet.getInt("productBonus"));
                 // add object in table.
                 productInvoiceData.add(invoiceProduct);
             }
         }
-        
+
     }
 
 }

@@ -5,30 +5,26 @@
  */
 package util;
 
+import config.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+
 public class DBUtil {
-    
+
     private Connection connection = null;
     private Statement state = null;
-    private final String url = "jdbc:postgresql://127.0.0.1:5432/DisturbutionManagmentSystem";
-    private final String user = "postgres";
-    private final String password = "admin";
-    
-    public Connection DbConnection () throws ClassNotFoundException {
-        try {
-            Class.forName("org.postgresql.Driver");
-            // getConnection.    
-            connection = DriverManager.getConnection( url, user, password);
-            
-        } catch (SQLException e) {
 
-            e.printStackTrace();
-            
-        }
+    public Connection DbConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.postgresql.Driver");
+        // Configuration Object.
+        Configuration configurationObject = new Configuration();
+        List databaseInfo = configurationObject.databaseConfiguration();
+        // getConnection.
+        connection = DriverManager.getConnection( String.valueOf(databaseInfo.get(0)) , String.valueOf(databaseInfo.get(1)), String.valueOf(databaseInfo.get(2)));
         return connection;
     }
-    
+
 }

@@ -3,16 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/controllers/ReportController.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/nbproject/build-impl.xml</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/handler/GeneratePDF.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/handler/GenerateCustomerPDF.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/handler/GenerateSalesPDF.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/controllers/CustomerViewController.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/controllers/OrderController.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/models/OrderModel.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/models/DashboardModel.java</file>
-            <file>file:/C:/Users/Ahmed/Documents/NetBeansProjects/StockManagmentSystem/src/controllers/DashboardController.java</file>
+            <file>file:/C:/Users/Administrator/Documents/NetBeansProjects/StockManagmentSystem/src/controllers/OrderController.java</file>
         </group>
     </open-files>
 </project-private>

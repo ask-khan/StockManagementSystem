@@ -1,4 +1,4 @@
-    /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -19,6 +19,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
+import config.Configuration;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.File;
@@ -103,12 +104,16 @@ public class GeneratePDF {
         ArrayList<String> customerInvoiceData = new ArrayList<String>();
         customerInvoiceData = getCustomerSelectById(Integer.valueOf(invoiceId));
         ResultSet resultSet = getInvoiceProductListById(Integer.valueOf(invoiceId));
+
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         int invoiceCount = 0;
         DecimalFormat df = new DecimalFormat("###.##");
+        
+        // Declare Configuration Object.
+        Configuration configurationObject = new Configuration();
         // Declare filePath.
-        String filePath = "C:\\Users/ss/Desktop/InvoicePDF/" + invoiceId + ".pdf";
+        String filePath = configurationObject.getFolderPath() + invoiceId + "-" + customerInvoiceData.get(1) + ".pdf";
 
         Font labelBold = new Font(FontFamily.COURIER, 9, Font.BOLD);
         Font normal = new Font(FontFamily.COURIER, 9, Font.NORMAL);
@@ -178,8 +183,15 @@ public class GeneratePDF {
 
         while (resultSet.next()) {
             invoiceCount++;
+            String bonus = "";
+            System.out.println(resultSet.getString("bonus"));
+            if (resultSet.getString("bonus") != null) {
+                System.out.println(resultSet.getString("bonus"));
+                bonus = !"0".equals(resultSet.getString("bonus")) ? "+" + resultSet.getString("bonus") : "";
+            }
+
             table.addCell(getCell(String.valueOf(invoiceCount), Element.ALIGN_LEFT, normal));
-            table.addCell(getCell(resultSet.getString("quanlity"), Element.ALIGN_LEFT, normal));
+            table.addCell(getCell(resultSet.getString("quanlity") + bonus, Element.ALIGN_LEFT, normal));
             ResultSet productDetail = this.getProductDetailById(resultSet.getString("productid"));
             table.addCell(getCell(productDetail.getString("productname"), Element.ALIGN_LEFT, normal));
             table.addCell(getCell(resultSet.getString("batchno"), Element.ALIGN_LEFT, normal));
@@ -239,25 +251,25 @@ public class GeneratePDF {
 
         // Bill Info Detail    
         Paragraph billAmountParagraphy = new Paragraph();
-        Chunk billAmountChunk = new Chunk("Bill Amount: " +  String.valueOf((int) Math.round(Float.valueOf(billAmount))), labelBold);
+        Chunk billAmountChunk = new Chunk("Bill Amount: " + String.valueOf((int) Math.round(Float.valueOf(billAmount))), labelBold);
         billAmountParagraphy.add(billAmountChunk);
         cell.addElement(billAmountParagraphy);
 
         // Previous Amount Detail    
         Paragraph previousBalanceParagraphy = new Paragraph();
-        Chunk previousBalanceChunk = new Chunk("Previous Balance: " + String.valueOf( (int) Math.round(previousBalance)), labelBold);
+        Chunk previousBalanceChunk = new Chunk("Previous Balance: " + String.valueOf((int) Math.round(previousBalance)), labelBold);
         previousBalanceParagraphy.add(previousBalanceChunk);
         cell.addElement(previousBalanceParagraphy);
 
         // Previous Amount Detail    
         Paragraph receivedParagraphy = new Paragraph();
-        Chunk receivedChunk = new Chunk("Received: " +  received, labelBold);
+        Chunk receivedChunk = new Chunk("Received: " + received, labelBold);
         receivedParagraphy.add(receivedChunk);
         cell.addElement(receivedParagraphy);
 
         // Balance Amount Detail    
         Paragraph balanceParagraphy = new Paragraph();
-        Chunk balanceChunk = new Chunk("Balance: " + String.valueOf( (int) Math.round(balance)), labelBold);
+        Chunk balanceChunk = new Chunk("Balance: " + String.valueOf((int) Math.round(balance)), labelBold);
         balanceParagraphy.add(balanceChunk);
         cell.addElement(balanceParagraphy);
 
@@ -436,7 +448,6 @@ public class GeneratePDF {
     }
 
     // Get Selected By Id.
-
     /**
      *
      * @param invoiceId
@@ -471,7 +482,6 @@ public class GeneratePDF {
     }
 
     // Get Invoice Product List By Id.
-
     /**
      *
      * @param invoiceId

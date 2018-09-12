@@ -8,22 +8,18 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="StockManagmentSystem.jar" size="275623" download="eager" />
-    <jar href="lib\commons-logging-1.2.jar" size="61829" download="eager" />
-    <jar href="lib\controlsfx-8.40.14.jar" size="1215643" download="eager" />
-    <jar href="lib\fontbox-2.0.2.jar" size="1477253" download="eager" />
+    <jar href="StockManagmentSystem.jar" size="278259" download="eager" />
+    <jar href="lib\apache-commons.jar" size="857029" download="eager" />
+    <jar href="lib\commons-logging-1.2.1.1.jar" size="60686" download="eager" />
+    <jar href="lib\controlsfx-8.40.12.jar" size="996389" download="eager" />
     <jar href="lib\io-7.0.3.jar" size="662499" download="eager" />
-    <jar href="lib\itext-pdfa-5.5.7.jar" size="113522" download="eager" />
-    <jar href="lib\itextpdf-5.4.0.jar" size="1889485" download="eager" />
-    <jar href="lib\itextpdf-5.5.7.jar" size="2275216" download="eager" />
-    <jar href="lib\jfoenix.jar" size="2406659" download="eager" />
-    <jar href="lib\kernel-7.0.0.jar" size="967008" download="eager" />
-    <jar href="lib\kernel-7.0.3.jar" size="1040587" download="eager" />
+    <jar href="lib\itextpdf-5.4.0.jar" size="1889486" download="eager" />
+    <jar href="lib\jfoenix-8.0.7.jar" size="2631271" download="eager" />
+    <jar href="lib\json-20140107.jar" size="64952" download="eager" />
     <jar href="lib\kernel-7.1.0.jar" size="1104311" download="eager" />
-    <jar href="lib\layout-7.0.0.jar" size="220351" download="eager" />
     <jar href="lib\layout-7.0.3.jar" size="344851" download="eager" />
     <jar href="lib\pdfbox-2.0.3.jar" size="2441253" download="eager" />
-    <jar href="lib\postgresql-42.1.4.jre7.jar" size="708602" download="eager" />
+    <jar href="lib\postgresql-42.2.5.jre7.jar" size="753264" download="eager" />
     <jar href="lib\slf4j-api-1.7.13.jar" size="33088" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="StockManagmentSystem" >

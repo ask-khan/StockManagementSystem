@@ -20,25 +20,7 @@
          <tabs>
             <Tab fx:id="tabPanelDashboard" text="Dashboard">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="dashboardInvoiceTable" layoutY="57.0" prefHeight="568.0" prefWidth="265.0">
-                          <columns>
-                            <TableColumn fx:id="invoiceId" prefWidth="52.0" text="ID" />
-                              <TableColumn fx:id="InvoiceCustomerName" prefWidth="119.0" text="Customer Name" />
-                            <TableColumn fx:id="InvoiceTotalAmount" prefWidth="92.0" text="Total Amount" />
-                          </columns>
-                        </TableView>
-                        <TextField fx:id="InvoiceSearchBox" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="250.0" promptText="Search Invoice Id/Customer Name" />
-                        <TableView fx:id="DashboardStockTableView" layoutX="765.0" layoutY="65.0" prefHeight="558.0" prefWidth="261.0">
-                          <columns>
-                            <TableColumn fx:id="stockId" prefWidth="46.0" text="ID" />
-                              <TableColumn fx:id="stockProductName" prefWidth="114.0" text="Product Name" />
-                            <TableColumn fx:id="stockQuanlity" prefWidth="99.0" text="Stock Quanlity" />
-                          </columns>
-                        </TableView>
-                        <TextField layoutX="764.0" layoutY="27.0" prefHeight="25.0" prefWidth="246.0" promptText="Search ID/Stock Quanlity" />
-                     </children></AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
             <Tab fx:id="tabPanelProduct" text="Products">

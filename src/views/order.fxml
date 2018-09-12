@@ -28,47 +28,50 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <DatePicker fx:id="datePicker" layoutX="746.0" layoutY="64.0" prefHeight="29.0" prefWidth="219.0" />
+        <DatePicker fx:id="datePicker" layoutX="630.0" layoutY="64.0" prefHeight="29.0" prefWidth="219.0" />
         <TextField fx:id="individualDiscount" layoutX="40.0" layoutY="285.0" prefHeight="29.0" prefWidth="205.0" promptText="Discount" visible="false" />
         <TableView fx:id="invoiceProductTable" layoutX="7.0" layoutY="347.0" prefHeight="332.0" prefWidth="740.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="232.0" AnchorPane.topAnchor="362.0">
             <columns>
                 <TableColumn fx:id="productId" prefWidth="46.0" text="ID" />
                 <TableColumn fx:id="productName" prefWidth="106.0" text="Product Name" />
-                <TableColumn fx:id="productPacking" prefWidth="73.0" text="Package" />
+                <TableColumn fx:id="productPacking" prefWidth="64.0" text="Package" />
+            <TableColumn fx:id="productBonus" prefWidth="84.0" text="Bonus" />
                 <TableColumn fx:id="productTradePrice" minWidth="0.0" prefWidth="81.0" text="Trade Price" />
-            <TableColumn fx:id="productBatchNo" prefWidth="75.0" text="Batch No" />
-            <TableColumn fx:id="productExpiredDate" prefWidth="75.0" text="Expired Date" />
-            <TableColumn fx:id="productDiscount" prefWidth="71.0" text="Discount" />
-                <TableColumn fx:id="productQuanlity" minWidth="0.0" prefWidth="93.0" text="Quanlity" />
-                <TableColumn fx:id="productAmount" maxWidth="1000.0" minWidth="0.0" prefWidth="117.0" text="Amount" />
+            <TableColumn fx:id="productBatchNo" prefWidth="67.0" text="Batch No" />
+            <TableColumn fx:id="productExpiredDate" prefWidth="63.0" text="Expired Date" />
+            <TableColumn fx:id="productDiscount" prefWidth="63.0" text="Discount" />
+                <TableColumn fx:id="productQuanlity" minWidth="0.0" prefWidth="66.0" text="Quanlity" />
+                <TableColumn fx:id="productAmount" maxWidth="1000.0" minWidth="0.0" prefWidth="99.0" text="Amount" />
             </columns>
         </TableView>
-      <JFXTextField fx:id="quanlityTextField" labelFloat="true" layoutX="638.0" layoutY="165.0" prefHeight="25.0" prefWidth="61.0" promptText="Quanlity" />
-      <JFXTextField fx:id="tradePriceTextField" labelFloat="true" layoutX="40.0" layoutY="238.0" prefHeight="25.0" prefWidth="390.0" promptText="Trade Price" />
-      <JFXTextField fx:id="areaTextField" labelFloat="true" layoutX="487.0" layoutY="66.0" prefHeight="25.0" prefWidth="219.0" promptText="Area" />
+      <JFXTextField fx:id="quanlityTextField" labelFloat="true" layoutX="709.0" layoutY="165.0" prefHeight="25.0" prefWidth="61.0" promptText="Quanlity" />
+      <JFXTextField fx:id="tradePriceTextField" labelFloat="true" layoutX="40.0" layoutY="238.0" prefHeight="25.0" prefWidth="261.0" promptText="Trade Price" />
+      <JFXTextField fx:id="areaTextField" labelFloat="true" layoutX="388.0" layoutY="66.0" prefHeight="25.0" prefWidth="190.0" promptText="Area" />
       <TextField fx:id="totalAmountTextField" layoutX="40.0" layoutY="285.0" prefHeight="44.0" prefWidth="390.0" promptText="Total Amount">
          <font>
             <Font name="System Bold" size="20.0" />
          </font></TextField>
       <Button fx:id="AddProductButton" layoutX="487.0" layoutY="236.0" mnemonicParsing="false" onAction="#addProductInvoiceFunction" prefHeight="29.0" prefWidth="167.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Add Product" textFill="#f5f0f0" />
-      <Button fx:id="GenerateInvoiceButton" layoutX="795.0" layoutY="579.0" mnemonicParsing="false" onAction="#GenerateInvoiceButtonFunction" prefHeight="25.0" prefWidth="143.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Generate Invoice" textFill="#f5f3f3" AnchorPane.bottomAnchor="90.0" AnchorPane.leftAnchor="795.0" AnchorPane.rightAnchor="34.0" AnchorPane.topAnchor="579.0" />
-      <JFXTextField fx:id="productPackingTextField" labelFloat="true" layoutX="856.0" layoutY="165.0" prefHeight="25.0" prefWidth="98.0" promptText="Packing" />
+      <JFXTextField fx:id="productPackingTextField" labelFloat="true" layoutX="871.0" layoutY="165.0" prefHeight="25.0" prefWidth="74.0" promptText="Packing" />
       <Button fx:id="deleteProductButton" layoutX="751.0" layoutY="302.0" mnemonicParsing="false" onAction="#ProductDeleteInvoiceButton" prefHeight="25.0" prefWidth="167.0" styleClass="buttonClass" stylesheets="@../styles/order.css" text="Delete" textFill="#fffefe" />
       <TextField fx:id="invoiceId" layoutX="746.0" layoutY="238.0" prefHeight="29.0" prefWidth="219.0" promptText="Invoice Id" visible="false" />
-      <JFXTextField fx:id="stockTextField" editable="false" labelFloat="true" layoutX="558.0" layoutY="165.0" prefHeight="25.0" prefWidth="61.0" promptText="Stock " />
+      <JFXTextField fx:id="stockTextField" editable="false" labelFloat="true" layoutX="617.0" layoutY="165.0" prefHeight="25.0" prefWidth="61.0" promptText="Stock " />
       <TextField fx:id="receivedAmountTextField" layoutX="487.0" layoutY="283.0" prefHeight="44.0" prefWidth="219.0" promptText="Received Payment">
          <font>
             <Font name="System Bold" size="20.0" />
          </font>
       </TextField>
-      <TextField fx:id="customerNameTextField" layoutX="40.0" layoutY="66.0" onAction="#customerCumboBoxFunction" prefHeight="25.0" prefWidth="390.0" promptText="Enter the Customer Name" />
-      <TextField fx:id="productListTextfield" layoutX="40.0" layoutY="165.0" onAction="#productListFunctionality" prefHeight="25.0" prefWidth="390.0" promptText="Enter the  Product Name" />
-      <JFXTextField fx:id="productdiscountTextField" layoutX="723.0" layoutY="165.0" prefHeight="25.0" prefWidth="98.0" promptText="Discount" />
+      <TextField fx:id="customerNameTextField" layoutX="40.0" layoutY="66.0" onAction="#customerCumboBoxFunction" prefHeight="25.0" prefWidth="304.0" promptText="Enter the Customer Name" />
+      <TextField fx:id="productListTextfield" layoutX="247.0" layoutY="165.0" onAction="#productListFunctionality" prefHeight="25.0" prefWidth="261.0" promptText="Enter the  Product Name" />
+      <JFXTextField fx:id="productdiscountTextField" layoutX="790.0" layoutY="165.0" prefHeight="25.0" prefWidth="61.0" promptText="Discount" />
       <JFXCheckBox fx:id="orderPrint" layoutX="796.0" layoutY="528.0" text="Print" AnchorPane.bottomAnchor="148.0" AnchorPane.leftAnchor="796.0" AnchorPane.rightAnchor="126.0" AnchorPane.topAnchor="528.0" />
       <JFXTextField fx:id="customerIdTextField" editable="false" layoutX="686.0" layoutY="234.0" prefHeight="29.0" prefWidth="135.0" AnchorPane.bottomAnchor="431.0" AnchorPane.leftAnchor="686.0" AnchorPane.rightAnchor="151.0" AnchorPane.topAnchor="234.0" />
       <JFXCheckBox fx:id="orderWarranty" layoutX="796.0" layoutY="479.0" text="Warranty" />
-      <JFXComboBox fx:id="batchNo" layoutX="471.0" layoutY="165.0" onAction="#batchNoFunction" prefHeight="25.0" prefWidth="74.0" />
+      <JFXComboBox fx:id="batchNo" layoutX="523.0" layoutY="165.0" onAction="#batchNoFunction" prefHeight="25.0" prefWidth="74.0" />
       <JFXTextField fx:id="expiredDate" layoutX="856.0" layoutY="240.0" prefHeight="25.0" prefWidth="98.0" />
+      <Button fx:id="GenerateInvoiceButton" layoutX="796.0" layoutY="589.0" mnemonicParsing="false" onAction="#GenerateInvoiceButtonFunction" prefHeight="25.0" prefWidth="149.0" text="Generate Invoice" />
+      <ChoiceBox fx:id="discountPackage" layoutX="40.0" layoutY="165.0" prefHeight="25.0" prefWidth="184.0" />
+      <JFXTextField fx:id="bonusTextField" layoutX="783.0" layoutY="165.0" prefHeight="25.0" prefWidth="80.0" promptText="Bonus" />
         
     </children>
 </AnchorPane>

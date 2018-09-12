@@ -88,6 +88,10 @@ public class ValidationDialog {
                 errorTitle = "Validation Alert";
                 errorMessage = "Product type is empty.";
                 break;
+            case 17:
+                errorTitle = "Alert";
+                errorMessage = "Discount Package cannot be empty.";
+                break;
             default:
                 break;
         }

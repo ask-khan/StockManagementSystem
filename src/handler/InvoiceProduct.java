@@ -20,7 +20,8 @@ import javafx.beans.property.StringProperty;
  */
 public class InvoiceProduct {
     // Declare Table View Attribute.
-    private final IntegerProperty productPacking, productId;
+    private final IntegerProperty productPacking, productId, productBonus;
+    
     private final IntegerProperty productQuanlity;
     private final StringProperty productName, productExpiredDate, productBatchNo;
     private final FloatProperty productTradePrice;
@@ -40,8 +41,9 @@ public class InvoiceProduct {
      * @param productDiscount
      * @param productExpiredDate
      * @param productBatchNo
+     * @param productBonus
      */
-    public InvoiceProduct ( String productName, int productPacking, int productQuanlity,  float productTradePrice, float productamount, int productId, double productDiscount, String productExpiredDate, String productBatchNo) {
+    public InvoiceProduct ( String productName, int productPacking, int productQuanlity,  float productTradePrice, float productamount, int productId, double productDiscount, String productExpiredDate, String productBatchNo, int productBonus) {
         this.productPacking = new SimpleIntegerProperty( productPacking );
         this.productExpiredDate = new SimpleStringProperty( productExpiredDate );
         this.productBatchNo = new SimpleStringProperty( productBatchNo );
@@ -51,8 +53,25 @@ public class InvoiceProduct {
         this.productQuanlity = new SimpleIntegerProperty( productQuanlity );
         this.productId = new SimpleIntegerProperty( productId );
         this.productDiscount = new SimpleDoubleProperty( productDiscount );
+        this.productBonus = new SimpleIntegerProperty( productBonus );
     }
-
+    
+    /**
+     *
+     * @return
+     */
+    public int getProductBonus() {
+        return productBonus.get();
+    }
+    
+    /**
+     *
+     * @param productBonus
+     */
+    public void setProductExpiredDate( int  productBonus ) {
+        this.productBonus.set(productBonus);
+    }
+    
     /**
      *
      * @return

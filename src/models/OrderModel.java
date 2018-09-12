@@ -103,8 +103,8 @@ public class OrderModel {
         double profitamount = Float.valueOf(invoiceProductList.get(3)) - (productPurchasePrice * Float.valueOf(invoiceProductList.get(2)));
         
         // Insert Product Query  
-        String insertInvoiceProductListQuery = "Insert into invoiceproduct   ( invoiceid , productid  , tradeprice  , quanlity  , amount , productdiscount , purchaseprice, profitamount, expireddate, batchno, createddate , modifieddate )";
-        String insertValueInvoiceProductListQuery = " values(  '" + invoiceProductList.get(4) + "' , '" + invoiceProductList.get(0) + "' ," + invoiceProductList.get(1) + ",'" + invoiceProductList.get(2) + "','" + invoiceProductList.get(3) + "','" + invoiceProductList.get(5) + "','" + productPurchasePrice + "','"  + profitamount + "','" + invoiceProductList.get(6) + "','" + invoiceProductList.get(7) + "'," + "current_timestamp, current_timestamp ) RETURNING *;";
+        String insertInvoiceProductListQuery = "Insert into invoiceproduct   ( invoiceid , productid  , tradeprice  , quanlity  , amount , productdiscount , purchaseprice, profitamount, expireddate, batchno, bonus, createddate , modifieddate )";
+        String insertValueInvoiceProductListQuery = " values(  '" + invoiceProductList.get(4) + "' , '" + invoiceProductList.get(0) + "' ," + invoiceProductList.get(1) + ",'" + invoiceProductList.get(2) + "','" + invoiceProductList.get(3) + "','" + invoiceProductList.get(5) + "','" + productPurchasePrice + "','"  + profitamount + "','" + invoiceProductList.get(6) + "','" + invoiceProductList.get(7) + "','" + invoiceProductList.get(8) + "'," + "current_timestamp, current_timestamp ) RETURNING *;";
         String finalInvoiceProductListQuery = insertInvoiceProductListQuery + insertValueInvoiceProductListQuery;
         
         //System.out.println(finalInvoiceProductListQuery);
@@ -142,8 +142,8 @@ public class OrderModel {
         Statement statementObject = connection.createStatement();
         double profitamount = Float.valueOf(invoiceProductList.get(3)) - productPurchasePrice * Float.valueOf(invoiceProductList.get(2));
         // Insert Product Query  
-        String insertInvoiceProductListQuery = "Insert into invoiceproduct   ( invoiceid , productid  , tradeprice  , quanlity  , amount , productdiscount, purchaseprice, profitamount, expireddate, batchno, createddate , modifieddate )";
-        String insertValueInvoiceProductListQuery = " values(  '" + invoiceProductList.get(4) + "' , '" + invoiceProductList.get(0) + "' ," + invoiceProductList.get(1) + ",'" + invoiceProductList.get(2) + "','" + invoiceProductList.get(3) + "','" + invoiceProductList.get(5) + "','" + productPurchasePrice + "','" + profitamount + "','"  + invoiceProductList.get(6) + "','" + invoiceProductList.get(7) + "'," + "current_timestamp, current_timestamp ) RETURNING *;";
+        String insertInvoiceProductListQuery = "Insert into invoiceproduct   ( invoiceid , productid  , tradeprice  , quanlity  , amount , productdiscount, purchaseprice, profitamount, expireddate, batchno, bonus, createddate , modifieddate )";
+        String insertValueInvoiceProductListQuery = " values(  '" + invoiceProductList.get(4) + "' , '" + invoiceProductList.get(0) + "' ," + invoiceProductList.get(1) + ",'" + invoiceProductList.get(2) + "','" + invoiceProductList.get(3) + "','" + invoiceProductList.get(5) + "','" + productPurchasePrice + "','" + profitamount + "','"  + invoiceProductList.get(6) + "','" + invoiceProductList.get(7) + "','" + invoiceProductList.get(8) + "'," + "current_timestamp, current_timestamp ) RETURNING *;";
         String finalInvoiceProductListQuery = insertInvoiceProductListQuery + insertValueInvoiceProductListQuery;
         //System.out.println(finalInvoiceProductListQuery);
         ResultSet resultSet = statementObject.executeQuery(finalInvoiceProductListQuery);
@@ -231,7 +231,7 @@ public class OrderModel {
                 + "(Select SUM(stockquanlity) \n"
                 + " FROM stock \n"
                 + " WHERE productid='" + productId + "') -\n"
-                + "coalesce((Select SUM(quanlity::integer) \n"
+                + "coalesce((Select SUM(quanlity::integer + bonus::integer ) \n"
                 + "From invoiceproduct \n"
                 + "WHERE productid='" + productId + "'),0) as productStock ;"; 
         
@@ -265,7 +265,7 @@ public class OrderModel {
                 + "From invoiceproduct \n"
                 + "WHERE productid='" + productId + "' AND batchno='" +  batchNo +"' ),0) as productStock ;";
         
-        //System.out.println(getAllInvoiceQuery );
+        System.out.println(getAllInvoiceQuery );
         ResultSet resultSet = statementObject.executeQuery(getAllInvoiceQuery);
 
         return resultSet;

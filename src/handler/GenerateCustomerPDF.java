@@ -19,6 +19,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
+import config.Configuration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,8 +77,10 @@ public class GenerateCustomerPDF {
         int invoiceCount = 0;
         double totalAmount = 0, receivedAmount = 0;
         DecimalFormat df = new DecimalFormat("###.##");
+        // Declare Configuration Object.
+        Configuration configurationObject = new Configuration();
         // Declare filePath.
-        String filePath = "C:\\Users/ss/Desktop/InvoicePDF/CustomerReports/" + customerId + ".pdf";
+        String filePath = configurationObject.getFolderPath()  + "CustomerReports/" + customerId + ".pdf";
 
         File file = new File(filePath);
 

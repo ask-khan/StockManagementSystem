@@ -503,9 +503,7 @@ public class DashboardController implements Initializable {
         });
     }
 
-    /**
-     *
-     */
+    // Get On Select Product Data. 
     public void getOnSelectProductData() {
         // product table clear.
         productTable.getItems().clear();
@@ -514,6 +512,7 @@ public class DashboardController implements Initializable {
         // Onload product data on table view.
         DashboardModel dashboardModel = new DashboardModel();
         try {
+            // Get All Product On load.
             ResultSet resultSet = dashboardModel.getAllProductOnLoad();
             ObservableList<String> productList = FXCollections.observableArrayList();
             while (resultSet.next()) {
@@ -533,13 +532,9 @@ public class DashboardController implements Initializable {
         }
     }
 
-    // get on select stock data.
-
-    /**
-     *
-     */
+    // Get On Select Stock Data.
     public void getOnSelectStockData() {
-        System.out.println( "getOnSelectStockData");
+        //System.out.println( "getOnSelectStockData function call");
         // stock table view clear.
         stockTableView.getItems().clear();
 
@@ -693,7 +688,6 @@ public class DashboardController implements Initializable {
         }
         
         
-
         if (productInformation.size() == 7) {
             // Dashboard Model Object.
             DashboardModel dashboardModel = new DashboardModel();
@@ -966,7 +960,7 @@ public class DashboardController implements Initializable {
         if (!customerContactTextField.getText().isEmpty() && validationInteger(customerContactTextField.getText())) {
             customerInformation.add(String.valueOf(customerContactTextField.getText()));
         } else {
-            customerContactTextField.validate();
+            customerInformation.add(" ");
         }
         // Set customer area validator.
         customerAreaValidator.setMessage("Customer area cannot be empty.");
@@ -984,7 +978,8 @@ public class DashboardController implements Initializable {
         if (!customerEmailAddress.getText().isEmpty() && this.validationEmailAddress(customerEmailAddress.getText())) {
             customerInformation.add(customerEmailAddress.getText());
         } else {
-            customerEmailAddress.validate();
+            //customerEmailAddress.validate();
+            customerInformation.add(" ");
         }
         // Set customer address cannot be empty.
         addressValidator.setMessage("Address cannot be empty.");
@@ -993,7 +988,8 @@ public class DashboardController implements Initializable {
         if (!customerAddress.getText().isEmpty()) {
             customerInformation.add(customerAddress.getText());
         } else {
-            customerAddress.validate();
+            //customerAddress.validate();
+            customerInformation.add(" ");
         }
         // if customer id is not empty.
         if (!customerIdTextField.getText().isEmpty()) {

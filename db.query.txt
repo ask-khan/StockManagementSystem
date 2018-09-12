@@ -154,5 +154,13 @@ invoiceproduct add  batchno text;
 Alter table
 invoiceproduct add expireddate text;
 
+Alter table 
+  products add productype text;
+
+Alter table
+invoiceproduct add productdiscount text;
+
+Alter table
+invoiceproduct add profitamount double precision;
 
 

@@ -33,12 +33,12 @@ public class DashboardModel {
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
         Statement statementObject = connection.createStatement();
-        productData = setProductNameAccordingToType( productData );
+        productData = setProductNameAccordingToType(productData);
         // Insert Product Query  
         String insertProductQuery = "Insert into products ( productname, brandname, purchaseprice, suppliername, productpacking, tradeprice, productype, createddate , modifieddate )";
         String insertValueProductQuery = " values(  '" + productData.get(1) + "' , '" + productData.get(2) + "' , " + productData.get(0) + ", '" + productData.get(3) + "', " + productData.get(4) + ", " + productData.get(5) + ",'" + productData.get(6) + "', current_timestamp, current_timestamp ) RETURNING *;";
         String finalInsertProductQuery = insertProductQuery + insertValueProductQuery;
-        //System.out.println(finalInsertProductQuery);
+        System.out.println(finalInsertProductQuery);
         ResultSet resultSet = statementObject.executeQuery(finalInsertProductQuery);
         connection.commit();
         if (resultSet.next()) {
@@ -80,7 +80,7 @@ public class DashboardModel {
      *
      * @param productData ArrayList username/ password.
      * @author Ahmed
-     * @return
+     * @return ResultSet
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
@@ -90,7 +90,7 @@ public class DashboardModel {
         Connection connection = dbObject.DbConnection();
         connection.setAutoCommit(false);
         Statement statementObject = connection.createStatement();
-        productData = setProductNameAccordingToType( productData );
+        productData = setProductNameAccordingToType(productData);
         // Update Product Query  
         String updateProductQuery = "UPDATE products SET productname = '" + productData.get(1) + "', brandname = '" + productData.get(2) + "', purchaseprice = " + productData.get(0) + ", tradeprice =" + productData.get(5) + ", productpacking = " + productData.get(4) + ", productype ='" + productData.get(7) + "', suppliername = '" + productData.get(3) + "', modifieddate = current_timestamp  WHERE id = " + productData.get(6) + "RETURNING *;";
 
@@ -103,10 +103,10 @@ public class DashboardModel {
             return null;
         }
     }
-    // get all product on load function.
 
     /**
-     *
+     * getAllProductOnLoad.
+     * @author Ahmed 
      * @return @throws ClassNotFoundException
      * @throws SQLException
      */
@@ -143,32 +143,29 @@ public class DashboardModel {
 
         return resultSet;
     }
-    
+
     /**
-     *
+     * setProductNameAccordingToType
      * @param productData
-     * @return
+     * @return ArrayList
      */
-    public ArrayList setProductNameAccordingToType( ArrayList<String> productData ){
-        System.out.println(productData.get(1).indexOf('*'));
-        if ( productData.get(7) == "Nutraceutical" && productData.size() == 8 ) {
-            if ( productData.get(1).indexOf('*') != 0) {
+    public ArrayList setProductNameAccordingToType(ArrayList<String> productData) {
+        //System.out.println(productData.get(1).indexOf('*'));
+        if ((productData.size() == 8 && ("Nutraceutical".equals(productData.get(7)))) || (productData.size() == 7 && ("Nutraceutical".equals(productData.get(6))))) {
+            if (productData.get(1).indexOf('*') != 0) {
                 String productName = "* " + productData.get(1);
                 productData.set(1, productName);
             }
-            
-        } else if ( "Pharmaceutical" == productData.get(7) && productData.size() == 8 ) {
-            
-            if ( productData.get(1).indexOf("*") == 0) {
-                String productName =  productData.get(1).substring(2, productData.get(1).length());
+
+        } else if ((productData.size() == 8 && ("Pharmaceutical".equals(productData.get(7)))) || (productData.size() == 7 && ("Pharmaceutical".equals(productData.get(6))))) {
+
+            if (productData.get(1).indexOf("*") == 0) {
+                String productName = productData.get(1).substring(2, productData.get(1).length());
                 //System.out.println(productName);
                 productData.set(1, productName);
             }
         }
-        
-        
-        
-        
+
         return productData;
     }
 }
