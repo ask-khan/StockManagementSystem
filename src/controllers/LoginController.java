@@ -21,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import models.LoginModel;
@@ -43,6 +44,9 @@ public class LoginController implements Initializable {
     @FXML
     private JFXButton loginButton;
     
+    @FXML
+    private ProgressIndicator loginProgressIndicator;
+    
     
   
     /**
@@ -52,8 +56,11 @@ public class LoginController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        RequiredFieldValidator userValidator = new RequiredFieldValidator(); 
+        loginProgressIndicator.setVisible(false);
         
+        loginProgressIndicator.setProgress(-1.0f);
+        
+        RequiredFieldValidator userValidator = new RequiredFieldValidator(); 
         // user Name is validation.
         userValidator.setMessage("User name is required."); 
         userNameTextField.getValidators().add(userValidator); 
@@ -78,15 +85,18 @@ public class LoginController implements Initializable {
      */
     @FXML
     private void loginButtonFunctionality(ActionEvent event) throws SQLException, ClassNotFoundException, IOException {
+        loginProgressIndicator.setVisible(true);
         ArrayList<String>  userInformation = new ArrayList<String>();//Creating arraylist
         LoginModel mainModelObject = new LoginModel();
         // If user name and password is not empty.
         if ( !userNameTextField.getText().isEmpty() && !passwordTextField.getText().isEmpty() ) {
+            
             userInformation.add( userNameTextField.getText() );
             userInformation.add( passwordTextField.getText() );
             boolean checkExist = mainModelObject.loginFunctionality( userInformation );
             
             if ( checkExist == true ) {
+                loginProgressIndicator.setVisible(false);
                 // hide the previous one windows.
                 ((Node) (event.getSource()) ).getScene().getWindow().hide();
                 Parent root = FXMLLoader.load(getClass().getResource("/views/dashboard.fxml"));

@@ -27,5 +27,6 @@
       <JFXTextField id="userNameTextField" fx:id="userNameTextField" labelFloat="true" layoutX="68.0" layoutY="114.0" prefHeight="25.0" prefWidth="230.0" promptText="User name" AnchorPane.bottomAnchor="161.0" AnchorPane.leftAnchor="68.0" AnchorPane.rightAnchor="102.0" AnchorPane.topAnchor="114.0" />
       <JFXPasswordField fx:id="passwordTextField" labelFloat="true" layoutX="68.0" layoutY="174.0" prefHeight="25.0" prefWidth="230.0" promptText="Password" />
       <JFXButton fx:id="loginButton" layoutX="246.0" layoutY="227.0" onAction="#loginButtonFunctionality" prefHeight="34.0" prefWidth="112.0" styleClass="buttonClass" text="Login" textFill="#fcfafa" />
+      <ProgressIndicator fx:id="loginProgressIndicator" layoutX="141.0" layoutY="147.0" prefHeight="80.0" prefWidth="105.0" progress="0.0" />
    </children>
 </AnchorPane>

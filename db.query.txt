@@ -24,36 +24,22 @@ CREATE TABLE products (
     productpacking integer,
     suppliername text,
     createddate timestamp,
-    modifieddate timestamp
+    modifieddate timestamp,
+    productype text
 );
-
-// Insert Table Product
-Insert into products ( productname, brandname, purchaseprice, suppliername, createddate , modifieddate  ) 
-values( 'Product A', 'Company A', 266.0, 'Ahmed Supplier Name', current_timestamp, current_timestamp );
-// Insert Table Product
-Insert into products ( productname, brandname, purchaseprice, suppliername, productpacking, tradeprice, createddate , modifieddate  ) 
-values(  'Product Name' , 'Brand Name' , '22', 'Supplier Name', '5', '100', current_timestamp, current_timestamp );
-
-
-// Invoice Table
-CREATE TABLE invoice (
-    id serial Primary key,
-    customerid text,
-    totalamount double,		
-    createddate timestamp,
-    modifieddate timestamp
-);
-// Insert Invoice Table
-Insert into invoice( customerid, totalamount, createddate, modifieddate ) values ( '123', 2331, current_timestamp, current_timestamp );
-
 
 // Create Invoice Product table
 CREATE TABLE invoiceproduct ( 
   id serial Primary key,
   productid text,
   tradeprice double precision,
+  purchaseprice double precision,
+  productdiscount text,
+  profitamount double precision,  
   quanlity text,
   invoiceid text,
+  expireddate text,
+  batchno text
   amount text,
   createddate timestamp,
   modifieddate timestamp
@@ -67,17 +53,12 @@ CREATE TABLE invoice (
   datepicker text,
   totalamount double precision,
   createddate timestamp,
-  modifieddate timestamp
+  modifieddate timestamp,
+  customerid integer,
+  warranty boolean,
+  profit double precision,
+  receivedamount double precision
 );
-
-
-SELECT
- *
-FROM
- pg_catalog.pg_tables
-WHERE
- schemaname != 'pg_catalog'
-AND schemaname != 'information_schema';
 
 // Customer Table.
 CREATE TABLE customer (
@@ -99,68 +80,15 @@ CREATE TABLE stock (
     stockquanlity bigint,
     stockFunction text,
     createddate timestamp,
-    modifieddate timestamp
+    modifieddate timestamp,
+    expireddate text,
+    batchno text
 );
-
-Select
-(Select SUM(stockquanlity) 
- FROM stock 
- WHERE productid='88') -
-(Select SUM(quanlity::integer) 
-From invoiceproduct 
-WHERE productid='88') ;
-
-
-Select ( Select SUM(stockquanlity) 
- FROM stock 
- WHERE productid='88' ) - 55;
- 
- Select ( Select SUM(stockquanlity) AS stockQuanlity
- FROM stock 
- WHERE productid= ( Select productid from stock where id=2 ) ) -55;
-
-Alter table invoice add receivedamount double precision; 	
-
-update invoice set receivedamount=0 where receivedamount=null;
-
-UPDATE invoice 
-SET receivedamount=0
-WHERE receivedamount is null;
-
-Alter table invoice add customerid integer; 
-
+// print setting table
 CREATE TABLE printsetting(
     id serial Primary Key,
     printname text,
     createddate timestamp,
     modifieddate timestamp	
 );
-
-Alter table invoice add warranty boolean; 
-
-Alter table invoice add profit double precision;
-
-Alter table invoiceproduct add purchaseprice double precision;
-
-Alter table 
-stock add expireddate text;
-
-Alter table 
-stock add batchno text;
-
-Alter table 
-invoiceproduct add  batchno text;
-
-Alter table
-invoiceproduct add expireddate text;
-
-Alter table 
-  products add productype text;
-
-Alter table
-invoiceproduct add productdiscount text;
-
-Alter table
-invoiceproduct add profitamount double precision;
-
 

@@ -21,7 +21,8 @@ public class Configuration {
     
     // File path.
     private static final String FOLDER_PATH = "C:\\Users/Administrator/Desktop/StockManagement/";
-
+    //private static final String FOLDER_PATH = "C:\\Users/Hp/Desktop/StockManagement/";
+    
     // Database configuration function.
     public List databaseConfiguration() {
         List databaseConfig = new ArrayList();

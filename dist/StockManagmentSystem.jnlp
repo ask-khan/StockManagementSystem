@@ -3,12 +3,12 @@
   <information>
     <title>StockManagmentSystem</title>
     <vendor>Ahmed</vendor>
-    <description>null</description>
+    <description>StockManagmentSystem</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="StockManagmentSystem.jar" size="278724" download="eager" />
+    <jar href="StockManagmentSystem.jar" size="278873" download="eager" />
     <jar href="lib\apache-commons.jar" size="857029" download="eager" />
     <jar href="lib\commons-logging-1.2.1.1.jar" size="60686" download="eager" />
     <jar href="lib\controlsfx-8.40.12.jar" size="996389" download="eager" />
@@ -22,9 +22,6 @@
     <jar href="lib\postgresql-42.2.5.jre7.jar" size="753264" download="eager" />
     <jar href="lib\slf4j-api-1.7.13.jar" size="33088" download="eager" />
   </resources>
-  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="StockManagmentSystem" >
-    <param name="requiredFXVersion" value="8.0+"/>
-  </applet-desc>
   <jfx:javafx-desc  width="800" height="600" main-class="stockmanagmentsystem.StockManagmentSystem"  name="StockManagmentSystem" />
-  <update check="always"/>
+  <update check="background"/>
 </jnlp>
